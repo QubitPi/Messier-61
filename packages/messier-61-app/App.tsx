@@ -17,7 +17,7 @@ import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 import Home from "../messier-61-home/Home";
-import type { GraphData, CanvasConfig, Margin } from "../messier-61-graph";
+import type { GraphData, CanvasConfig } from "../messier-61-graph";
 import { Graph } from "../messier-61-graph";
 
 export default function App(): JSX.Element {
@@ -42,7 +42,7 @@ export default function App(): JSX.Element {
         name: "link1",
         source: "1",
         target: "2",
-      }
+      },
     ],
   };
 
@@ -53,8 +53,8 @@ export default function App(): JSX.Element {
       top: 10,
       bottom: 10,
       left: 10,
-      right: 10
-    }
+      right: 10,
+    },
   };
 
   return (

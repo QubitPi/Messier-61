@@ -41,15 +41,15 @@ module.exports = function (webpackEnv) {
         {
           test: /\.css$/,
           use: [
-            'style-loader',
+            "style-loader",
             {
-              loader: 'css-loader',
+              loader: "css-loader",
               options: {
                 importLoaders: 1,
-                modules: true
-              }
-            }
-          ]
+                modules: true,
+              },
+            },
+          ],
         },
         {
           test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/, /\.webp$/],

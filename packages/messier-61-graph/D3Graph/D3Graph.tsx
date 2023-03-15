@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 import React, { useEffect, useRef } from "react";
-import type { GraphData, Node, Link, GraphConfig, Margin } from "../GraphConfig";
+import type { Node, Link, GraphConfig } from "../GraphConfig";
 import * as d3 from "d3";
-import "./D3Graph.css";
+import styles from "./D3Graph.module.css";
 
 const DELETE_KEY_CODE = 46;
 const BACKSPACE_KEY_CODE = 8;
@@ -58,7 +58,8 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
     const circlesg = svg.append("g");
 
     // Arrow marker
-    svg.append("svg:defs")
+    svg
+      .append("svg:defs")
       .selectAll("marker")
       .data(["child"])
       .enter()
@@ -74,13 +75,9 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
       .append("svg:path")
       .attr("d", "M0,-5L10,0L0,5");
 
-    d3.select(svgRef.current)
-      .on("mouseup", windowMouseup)
-      .on("mousemove", windowMousemove)
-      .on("mousedown", mousedown);
+    d3.select(svgRef.current).on("mouseup", windowMouseup).on("mousemove", windowMousemove).on("mousedown", mousedown);
 
-    d3.select(window)
-      .on("keydown", windowKeydown)
+    d3.select(window).on("keydown", windowKeydown);
 
     /**
      * Reload all existing links & nodes and off-load obsolete (soft-deleted) ones.
@@ -95,16 +92,28 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
      * @see [key function](https://www.d3indepth.com/datajoins/#key-functions)
      */
     function update(): void {
-      const link = linesg.selectAll("line.link")
+      const link = linesg
+        .selectAll("line.link")
         .data(links)
-        .attr("x1", function (d: any) { return d.source.x; })
-        .attr("y1", function (d: any) { return d.source.y; })
-        .attr("x2", function (d: any) { return d.target.x; })
-        .attr("y2", function (d: any) { return d.target.y; })
-        .classed("selected", function (d: any) { return d === selectedLink; });
+        .attr("x1", function (d: any) {
+          return d.source.x;
+        })
+        .attr("y1", function (d: any) {
+          return d.source.y;
+        })
+        .attr("x2", function (d: any) {
+          return d.target.x;
+        })
+        .attr("y2", function (d: any) {
+          return d.target.y;
+        })
+        .classed("selected", function (d: any) {
+          return d === selectedLink;
+        });
 
       // load all existing links
-      link.enter()
+      link
+        .enter()
         .append("line")
         .attr("class", "link")
         .attr("marker-end", "url(#child)")
@@ -113,12 +122,20 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
       // off-load obsolete links due to node removal
       link.exit().remove();
 
-      const node = circlesg.selectAll(".node")
-        .data(nodes, function (d: any) { return d.name; })
-        .classed("selected", function (d: any) { return d === selectedSourceNode; })
-        .classed("selectedTarget", function (d: any) { return d === selectedTargetNode; })
+      const node = circlesg
+        .selectAll(".node")
+        .data(nodes, function (d: any) {
+          return d.name;
+        })
+        .classed("selected", function (d: any) {
+          return d === selectedSourceNode;
+        })
+        .classed("selectedTarget", function (d: any) {
+          return d === selectedTargetNode;
+        });
 
-      const nodeg = node.enter()
+      const nodeg = node
+        .enter()
         .append("g")
         .attr("class", "node")
         .call(d3.drag)
@@ -126,26 +143,41 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
           return `translate(${d.x as string}, ${d.y as string})`;
         });
 
-      nodeg.append("circle")
+      nodeg
+        .append("circle")
         .attr("r", 10)
         .on("mousedown", nodeMousedown)
         .on("mouseover", nodeMouseover)
         .on("mouseout", nodeMouseout);
 
-      nodeg.append("svg:a")
-        .attr("xlink:href", function (d: any) { return d.url || '#'; })
+      nodeg
+        .append("svg:a")
+        .attr("xlink:href", function (d: any) {
+          return d.url || "#";
+        })
         .append("text")
         .attr("dx", 12)
         .attr("dy", ".35em")
-        .text(function (d: any) { return d.name });
+        .text(function (d: any) {
+          return d.name;
+        });
       node.exit().remove();
 
       simulation.nodes(nodes); // Reload nodes in simulation - https://github.com/d3/d3-force#simulation_nodes
       simulation.on("tick", () => {
-        link.attr("x1", function (d: any) { return d.source.x; })
-          .attr("y1", function (d: any) { return d.source.y; })
-          .attr("x2", function (d: any) { return d.target.x; })
-          .attr("y2", function (d: any) { return d.target.y; });
+        link
+          .attr("x1", function (d: any) {
+            return d.source.x;
+          })
+          .attr("y1", function (d: any) {
+            return d.source.y;
+          })
+          .attr("x2", function (d: any) {
+            return d.target.x;
+          })
+          .attr("y2", function (d: any) {
+            return d.target.y;
+          });
         node.attr("transform", function (d: any) {
           return `translate(${d.x as string}, ${d.y as string})`;
         });
@@ -193,7 +225,7 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
 
       d.fixed = true;
 
-      simulation.stop()
+      simulation.stop();
 
       update();
     }
@@ -293,10 +325,19 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
           if (!newLine) {
             newLine = linesg.append("line").attr("class", "newLine");
           }
-          newLine.attr("x1", function (d: any) { return selectedSourceNode.x; })
-            .attr("y1", function (d: any) { return selectedSourceNode.y; })
-            .attr("x2", function (d: any) { return x; })
-            .attr("y2", function (d: any) { return y; });
+          newLine
+            .attr("x1", function (d: any) {
+              return selectedSourceNode.x;
+            })
+            .attr("y1", function (d: any) {
+              return selectedSourceNode.y;
+            })
+            .attr("x2", function (d: any) {
+              return x;
+            })
+            .attr("y2", function (d: any) {
+              return y;
+            });
         }
       }
       update();
@@ -328,14 +369,14 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
             x: pointerLocation[0],
             y: pointerLocation[1],
             name: `${DEFAULT_NODE_NAME} ${nodes.length}`,
-            group: 1
-          }
+            group: 1,
+          };
           nodes.push(newNode);
           simulation.nodes(nodes); // Reload nodes in simulation - https://github.com/d3/d3-force#simulation_nodes
         }
 
         selectedSourceNode.fixed = false;
-        links.push({ source: selectedSourceNode, target: newNode })
+        links.push({ source: selectedSourceNode, target: newNode });
 
         selectedSourceNode = null;
         selectedTargetNode = null;
@@ -360,13 +401,13 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
      * @see [How to obtain pointer location in D3](https://stackoverflow.com/a/63988345)
      */
     function mousedown(event: any, d: any): void {
-      const pointerLocation = d3.pointer(event, svg.node())
+      const pointerLocation = d3.pointer(event, svg.node());
 
       nodes.push({
         x: pointerLocation[0],
         y: pointerLocation[1],
         name: `${DEFAULT_NODE_NAME} ${nodes.length}`,
-        group: 1
+        group: 1,
       });
 
       simulation.nodes(nodes); // Reload nodes in simulation - https://github.com/d3/d3-force#simulation_nodes
@@ -379,7 +420,8 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
     }
   }, [nodes, links, svgRef.current]);
 
-  return <svg ref={svgRef} width={width} height={height} />;
+  const stylesName = [styles.g, styles.node, styles.line, styles.link, styles.newLine];
+  return <svg ref={svgRef} width={width} height={height} className={stylesName.join(" ")} />;
 }
 
 /**
@@ -404,12 +446,18 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
  * @see [How node ID are accessed in D3](https://stackoverflow.com/a/45382200)
  */
 function initializeSimulation(nodes: any[], links: any[], width: number, height: number): any {
-  return d3.forceSimulation(nodes)
+  return d3
+    .forceSimulation(nodes)
     .force("charge", d3.forceManyBody().strength(DEFAULT_FORCE_STRENGTH))
-    .force("link", d3.forceLink()
-      .distance(DEFAULT_LINK_DISTANCE)
-      .id(function (d: any) { return d.id })
-      .links(links)
+    .force(
+      "link",
+      d3
+        .forceLink()
+        .distance(DEFAULT_LINK_DISTANCE)
+        .id(function (d: any) {
+          return d.id;
+        })
+        .links(links)
     )
     .force("center", d3.forceCenter(width / 2, height / 2));
 }
@@ -424,10 +472,7 @@ function initializeSimulation(nodes: any[], links: any[], width: number, height:
  * @returns the selection itself, i.e. The bound SVG instance
  */
 function attatchSvgTo(htmlContainer: any, width: number, height: number): any {
-  return d3.select(htmlContainer)
-    .append("svg")
-    .attr("width", width)
-    .attr("height", height);
+  return d3.select(htmlContainer).append("svg").attr("width", width).attr("height", height);
 }
 
 /**

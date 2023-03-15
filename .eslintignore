@@ -3,7 +3,4 @@ docs/**
 build/**
 
 packages/messier-61-app/messier-61-env.d.ts
-src/components/Wiki/plugins/ListMaxIndentLevelPlugin.js
-src/components/Wiki/plugins/Messier61GraphPlugin.tsx
-src/components/Wiki/plugins/ToolbarPlugin.js
-src/components/Wiki/plugins/ListMaxIndentLevelPlugin.js
+packages/messier-61-graph/D3Graph/D3Graph.tsx
