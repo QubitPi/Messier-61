@@ -159,7 +159,7 @@ main {
   justify-content: space-between;
 }
 
-.card-info {
+.cardInfo {
   display: flex;
   flex-direction: column;
   justify-content: space-between;

@@ -16,13 +16,13 @@
 import React, { useEffect, useRef } from "react";
 import type { Node, Link, GraphConfig } from "../GraphConfig";
 import * as d3 from "d3";
-import styles from "./D3Graph.module.css";
+import styles from "./ConfigurableD3Graph.module.css";
 
 const DELETE_KEY_CODE = 46;
 const BACKSPACE_KEY_CODE = 8;
 
 const DEFAULT_LINK_DISTANCE = 90;
-const DEFAULT_FORCE_STRENGTH = -340;
+const DEFAULT_FORCE_STRENGTH = -30;
 
 const DEFAULT_NODE_NAME = "new node";
 
@@ -33,7 +33,7 @@ const DEFAULT_NODE_NAME = "new node";
  *
  * @returns A D3 visualization of network graph
  */
-export function D3Graph(graphConfig: GraphConfig): JSX.Element {
+export function ConfigurableD3Graph(graphConfig: GraphConfig): JSX.Element {
   const svgRef = useRef(null);
 
   const width = graphConfig.canvasConfig.width;
@@ -56,24 +56,6 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
 
     const linesg = svg.append("g");
     const circlesg = svg.append("g");
-
-    // Arrow marker
-    svg
-      .append("svg:defs")
-      .selectAll("marker")
-      .data(["child"])
-      .enter()
-      .append("svg:marker")
-      .attr("id", String)
-      .attr("markerUnits", "userSpaceOnUse")
-      .attr("viewBox", "0 -5 10 10")
-      .attr("refX", DEFAULT_LINK_DISTANCE)
-      .attr("refY", -1.1)
-      .attr("markerWidth", 10)
-      .attr("markerHeight", 10)
-      .attr("orient", "auto")
-      .append("svg:path")
-      .attr("d", "M0,-5L10,0L0,5");
 
     d3.select(svgRef.current).on("mouseup", windowMouseup).on("mousemove", windowMousemove).on("mousedown", mousedown);
 
@@ -145,7 +127,7 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
 
       nodeg
         .append("circle")
-        .attr("r", 10)
+        .attr("r", 20)
         .on("mousedown", nodeMousedown)
         .on("mouseover", nodeMouseover)
         .on("mouseout", nodeMouseout);
@@ -153,10 +135,10 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
       nodeg
         .append("svg:a")
         .attr("xlink:href", function (d: any) {
-          return d.url || "#";
+          return d.url != null ? d.url : "#";
         })
         .append("text")
-        .attr("dx", 12)
+        .attr("dx", 24)
         .attr("dy", ".35em")
         .text(function (d: any) {
           return d.name;
@@ -273,7 +255,7 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
       switch (event.keyCode) {
         case BACKSPACE_KEY_CODE:
         case DELETE_KEY_CODE: {
-          if (selectedSourceNode) {
+          if (selectedSourceNode != null) {
             const i = nodes.indexOf(selectedSourceNode);
             nodes.splice(i, 1);
 
@@ -286,12 +268,12 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
             });
             links = preservedLinks;
 
-            selectedSourceNode = nodes.length ? nodes[i > 0 ? i - 1 : 0] : null;
-          } else if (selectedLink) {
+            selectedSourceNode = nodes.length > 0 ? nodes[i > 0 ? i - 1 : 0] : null;
+          } else if (selectedLink != null) {
             const i = links.indexOf(selectedLink);
             links.splice(i, 1);
 
-            selectedLink = links.length ? links[i > 0 ? i - 1 : 0] : null;
+            selectedLink = links.length > 0 ? links[i > 0 ? i - 1 : 0] : null;
           }
           update();
           break;
@@ -322,7 +304,7 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
         const dx = selectedSourceNode.x - x;
         const dy = selectedSourceNode.y - y;
         if (Math.sqrt(dx * dx + dy * dy) > 10) {
-          if (!newLine) {
+          if (newLine == null) {
             newLine = linesg.append("line").attr("class", "newLine");
           }
           newLine
@@ -357,10 +339,10 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
      */
     function windowMouseup(event: any, d: any): void {
       drawingLine = false;
-      if (newLine) {
+      if (newLine != null) {
         let newNode: any;
 
-        if (selectedTargetNode) {
+        if (selectedTargetNode != null) {
           selectedTargetNode.fixed = false;
           newNode = selectedTargetNode;
         } else {
@@ -482,7 +464,7 @@ function attatchSvgTo(htmlContainer: any, width: number, height: number): any {
  *
  * @returns a list of D3 force-graph nodes
  */
-export function initializeNodes(inputNodes: Node[]): any[] {
+function initializeNodes(inputNodes: Node[]): any[] {
   return inputNodes;
 }
 
@@ -500,6 +482,6 @@ export function initializeNodes(inputNodes: Node[]): any[] {
  *
  * @returns a list of D3 force-graph links
  */
-export function initializeLinks(inputLinks: Link[]): any[] {
+function initializeLinks(inputLinks: Link[]): any[] {
   return inputLinks;
 }

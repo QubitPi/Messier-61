@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 /**
  * A graph config instructs {@link D3Graph} how the D3 network graph is going to be rendered and with what data to be
  * rendered.

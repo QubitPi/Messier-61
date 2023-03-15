@@ -1,4 +1,3 @@
-<!-- Copyright 2023 Paion Data. All rights reserved. -->
 ---
 title: Markdown page example
 ---
