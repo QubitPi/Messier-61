@@ -30,7 +30,7 @@ The use and distribution terms for [Messier-61][Messier-61 documentation] are co
 
 [license badge]: https://img.shields.io/badge/Apache%202.0-F25910.svg?style=for-the-badge&logo=Apache&logoColor=white
 
-[Messier-61 documentation]: https://paion-data.github.io/Messier-61/
+[Messier-61 documentation]: https://QubitPi.github.io/Messier-61/
 [Messier-61 Wikipedia]: https://en.wikipedia.org/wiki/Messier_61
 
 [node version badge]: https://img.shields.io/node/v/@paiondata/messier-61?logo=Node.js&logoColor=white&style=for-the-badge
