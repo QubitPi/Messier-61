@@ -13,10 +13,4 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-"use strict";
-
-module.exports = function () {
-  return {
-    historyApiFallback: true,
-  };
-};
+export { D3Graph } from "./D3Graph";

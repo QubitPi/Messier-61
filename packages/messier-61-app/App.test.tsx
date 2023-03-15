@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-"use strict";
+import React from "react";
+import { render } from "@testing-library/react";
+import App from "./App";
 
-module.exports = function () {
-  return {
-    historyApiFallback: true,
-  };
-};
+test("renders app without error", () => {
+  render(<App />);
+});

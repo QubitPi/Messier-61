@@ -13,10 +13,5 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-"use strict";
-
-module.exports = function () {
-  return {
-    historyApiFallback: true,
-  };
-};
+export { Graph } from "./Graph";
+export type { GraphConfig, GraphData, Node, Link, CanvasConfig, Margin } from "./GraphConfig";

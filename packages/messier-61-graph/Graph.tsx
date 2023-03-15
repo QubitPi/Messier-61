@@ -13,10 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-"use strict";
+import React from "react";
+import type { GraphData, CanvasConfig } from "./GraphConfig";
+import { D3Graph } from "./D3Graph";
+import type { GraphConfig } from "./GraphConfig"
 
-module.exports = function () {
-  return {
-    historyApiFallback: true,
-  };
-};
+/**
+ * Generates a D3 graph whose content is defined by a provided {@link Graph graph data}.
+ *
+ * @param props An object containing a list of {@link Graph. Node}'s and list of {@link Graph. Link}'s
+ *
+ * @returns A D3 visualization of network graph
+ */
+export function Graph(graphConfig: GraphConfig): JSX.Element {
+  return <D3Graph graphData={graphConfig.graphData} canvasConfig={graphConfig.canvasConfig} />
+}

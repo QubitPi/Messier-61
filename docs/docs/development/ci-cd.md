@@ -3,8 +3,6 @@ sidebar_position: 2
 title: CI/CD
 ---
 
-<!-- Copyright 2023 Paion Data. All rights reserved. -->
-
 Testing
 -------
 

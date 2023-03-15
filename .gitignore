@@ -1,6 +1,7 @@
 # Copyright 2023 Paion Data. All rights reserved.
 dist
 /build
+.idea/
 .DS_Store
 /coverage
 node_modules
