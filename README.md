@@ -33,8 +33,8 @@ The use and distribution terms for [Messier-61][Messier-61 documentation] are co
 [Messier-61 documentation]: https://QubitPi.github.io/Messier-61/
 [Messier-61 Wikipedia]: https://en.wikipedia.org/wiki/Messier_61
 
-[node version badge]: https://img.shields.io/node/v/@paiondata/messier-61?logo=Node.js&logoColor=white&style=for-the-badge
-[npm registry]: https://img.shields.io/npm/v/@paiondata/messier-61?logo=npm&style=for-the-badge
+[node version badge]: https://img.shields.io/node/v/messier-61?logo=Node.js&logoColor=white&style=for-the-badge
+[npm registry]: https://img.shields.io/npm/v/messier-61?logo=npm&style=for-the-badge
 
 [Prettier badge]: https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=for-the-badge&logo=Prettier
 
