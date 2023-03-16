@@ -240,7 +240,7 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
      * @see [Event listener parameter](https://observablehq.com/@d3/d3v6-migration-guide#events)
      * @see [setTimeout](https://www.w3schools.com/jsref/met_win_settimeout.asp)
      */
-    function windowMouseup(even: any, d: any): void {
+    function windowMouseup(event: any, d: any): void {
       drawingLine = false;
       if (newLine != null) {
         if (selectedTargetNode != null) {

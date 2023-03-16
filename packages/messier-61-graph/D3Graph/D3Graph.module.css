@@ -1,3 +1,4 @@
+/* Copyright 2023 Paion Data. All rights reserved. */
 marker#child {
   fill: rgb(255, 120, 25);
 }
@@ -29,12 +30,10 @@ svg.g.node a {
 
 svg.line.newLine {
   stroke: rgb(30, 197, 55);
-  /* stroke-opacity: .8; */
   stroke-width: 1.2px;
 }
 svg.line.link {
   stroke: rgb(255, 120, 25);
-  /* stroke-opacity: .8; */
   stroke-width: 1.2px;
 }
 
