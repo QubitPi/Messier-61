@@ -1,6 +1,6 @@
 // Copyright 2023 Paion Data. All rights reserved.
 import React, { useEffect, useRef } from "react";
-import type { GraphData, Node, GraphConfig } from "../GraphConfig";
+import type { Node, GraphConfig } from "../GraphConfig";
 import * as d3 from "d3";
 import styles from "./D3Graph.module.css";
 
@@ -9,9 +9,10 @@ const DEFAULT_FORCE_STRENGTH = -30;
 const DEFAULT_CIRCULE_RADIUS = 20;
 
 /**
- * Generates a D3 graph whose content is defined by a provided {@link Graph graph data}.
+ * Generates a D3 graph whose content is defined by a provided {@link GraphConfig.GraphData}.
  *
- * @param props An object containing a list of {@link Graph. Node}'s and list of {@link Graph. Link}'s
+ * @param graphConfig An object specifying the visual config of graph and graph data, which contains a list of
+ * {@link GraphConfig.GraphData.Node}'s and list of @link GraphConfig.Link}'s
  *
  * @returns A D3 visualization of network graph
  */
@@ -19,13 +20,7 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
   const svgRef = useRef(null);
   const width = graphConfig.canvasConfig.width;
   const height = graphConfig.canvasConfig.height;
-
   const nodes = initializeNodes(graphConfig.graphData.nodes);
-  // console.log(nodes[0].x);
-  // for (let key in nodes[0]) {
-  //   console.log(key + "---" + nodes[0]);
-  // }
-
   const links = initializeLinks(graphConfig.graphData.links);
 
   useEffect(() => {
@@ -36,7 +31,7 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
 
     const simulation = initializeSimulation(nodes, links, width, height);
 
-    const svg = attatchSvgTo(svgRef.current, width, height);
+    const svg = d3.select(svgRef.current).attr("width", width).attr("height", height);
 
     /**
      * Reload all existing links & nodes and off-load obsolete (soft-deleted) ones.
@@ -67,8 +62,6 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
         .enter()
         .append("g")
         .attr("class", "node")
-        // .attr("class", styles.node)
-
         .call(d3.drag)
         .attr("transform", function (d: any) {
           return `translate(${d.x as string}, ${d.y as string})`;
@@ -76,20 +69,17 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
 
       nodeg
         .append("circle")
-        .attr("class", "circle")
         .attr("r", DEFAULT_CIRCULE_RADIUS)
         .on("mousedown", nodeMousedown)
         .on("mouseover", nodeMouseover)
         .on("mouseout", nodeMouseout)
         .append("svg:a")
-        .attr("class", "a")
         .attr("xlink:href", function (d: any) {
-          return d.url != null || "#";
+          return d.url != null ? d.url : "#";
         });
 
       nodeg
         .append("text")
-        .attr("class", "text")
         .attr("dx", 25)
         .attr("dy", ".35em")
         .text(function (d: any) {
@@ -199,7 +189,7 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
         const dx = selectedSourceNode.x - x;
         const dy = selectedSourceNode.y - y;
         if (Math.sqrt(dx * dx + dy * dy) > 10) {
-          if (newLine === 'undefined') {
+          if (newLine === "undefined") {
             newLine = linesg.append("line").attr("class", "newLine");
           }
           newLine
@@ -232,10 +222,10 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
      * @see [Event listener parameter](https://observablehq.com/@d3/d3v6-migration-guide#events)
      * @see [setTimeout](https://www.w3schools.com/jsref/met_win_settimeout.asp)
      */
-    function windowMouseup(d: any): any {
+    function windowMouseup(even: any, d: any): any {
       drawingLine = false;
-      if (newLine !== 'undefined') {
-        if (selectedTargetNode !== 'undefined') {
+      if (newLine !== "undefined") {
+        if (selectedTargetNode !== "undefined") {
           selectedTargetNode.fixed = false;
           d = selectedTargetNode;
         }
@@ -256,41 +246,11 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
 
     d3.select(svgRef.current).on("mouseup", windowMouseup).on("mousemove", windowMousemove);
 
-    // svg
-    //   .append("svg:defs")
-    //   .selectAll("marker")
-    //   .data(["child"])
-    //   .enter()
-    //   .append("svg:marker")
-    //   .attr("id", String)
-    //   .attr("markerUnits", "userSpaceOnUse")
-    //   .attr("viewBox", "0 -5 10 10")
-    //   .attr("refX", DEFAULT_CIRCULE_RADIUS + 10)
-    //   .attr("refY", -1.1)
-    //   .attr("markerWidth", 10)
-    //   .attr("markerHeight", 10)
-    //   .attr("orient", "auto")
-    //   .append("svg:path")
-    //   .attr("d", "M0,-5L10,0L0,5");
-
     const linesg = svg.append("g");
     const circlesg = svg.append("g");
   }, [nodes, links, svgRef.current]);
   const stylesName = [styles.g, styles.node, styles.line, styles.link, styles.newLine];
   return <svg ref={svgRef} width={width} height={height} className={stylesName.join(" ")}></svg>;
-}
-
-/**
- * Selects a specified HTML element and bind a new SVG to it using the provided width and height.
- *
- * @param htmlContainer The string that specifies which elements this SVG bind to and is in the form of a CSS
- * @param width The width of the SVG
- * @param height The height of the SVG
- *
- * @returns the selection itself, i.e. The bound SVG instance
- */
-export function attatchSvgTo(htmlContainer: any, width: number, height: number): any {
-  return d3.select(htmlContainer).attr("width", width).attr("height", height);
 }
 
 /**
@@ -332,18 +292,18 @@ function initializeSimulation(nodes: any[], links: any[], width: number, height:
 }
 
 /**
- * Converts a list of {@link D3Graph. Node}'s to D3-compatible nodes.
+ * Converts a list of {@link GraphConfig.GraphData. Node}'s to D3-compatible nodes.
  *
  * @param inputNodes The list of all node objects in Messier-61 format
  *
  * @returns a list of D3 force-graph nodes
  */
-export function initializeNodes(inputNodes: Node[]): any[] {
+function initializeNodes(inputNodes: Node[]): any[] {
   return inputNodes;
 }
 
 /**
- * Converts a list of {@link Graph. Link}'s to D3-compatible links.
+ * Converts a list of {@link GraphConfig.GraphData. Link}'s to D3-compatible links.
  *
  * Each of the returned links promises to have the following attributes:
  *
@@ -356,6 +316,6 @@ export function initializeNodes(inputNodes: Node[]): any[] {
  *
  * @returns a list of D3 force-graph links
  */
-export function initializeLinks(inputLinks: Node[]): any[] {
+function initializeLinks(inputLinks: Node[]): any[] {
   return inputLinks;
 }

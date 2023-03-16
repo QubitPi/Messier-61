@@ -12,12 +12,12 @@ svg.g.node text {
   fill: black;
 }
 
-g.node.selectedSource circle {
+svg.g.node.selectedSource circle {
   fill: rgb(30, 197, 55);
   stroke-width: 1.2px;
 }
 
-g.node.selectedTarget circle {
+svg.g.node.selectedTarget circle {
   fill: rgb(30, 197, 55);
   stroke-width: 1.2px;
 }
@@ -41,11 +41,6 @@ svg.line.link {
 svg.g.node text {
   stroke: black;
   font: 13px sans-serif;
-}
-
-line.selected {
-  stroke: rgb(58, 204, 80);
-  stroke-opacity: 1;
 }
 
 rect {
