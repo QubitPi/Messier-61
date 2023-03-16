@@ -1,6 +1,6 @@
 // Copyright 2023 Paion Data. All rights reserved.
 import React, { useEffect, useRef } from "react";
-import type { Node, GraphConfig } from "../GraphConfig";
+import type { Node, Link, GraphConfig } from "../GraphConfig";
 import * as d3 from "d3";
 import styles from "./D3Graph.module.css";
 
@@ -94,7 +94,6 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
         .enter()
         .append("line")
         .attr("class", "link")
-        .attr("data-testid", "custom-link")
         .attr("x1", function (d: any) {
           return d.source.x;
         })
@@ -168,7 +167,7 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
      *
      * @see [Event listener parameter](https://observablehq.com/@d3/d3v6-migration-guide#events)
      */
-    function nodeMouseover(d: any): any {
+    function nodeMouseover(event: any, d: any): void {
       if (drawingLine && d !== selectedSourceNode) {
         selectedTargetNode = d;
       }
@@ -183,7 +182,7 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
      *
      * @see [Event listener parameter](https://observablehq.com/@d3/d3v6-migration-guide#events)
      */
-    function nodeMouseout(d: any): any {
+    function nodeMouseout(event: any, d: any): void {
       if (drawingLine) {
         selectedTargetNode = null;
       }
@@ -209,7 +208,7 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
         const dy = selectedSourceNode.y - y;
         if (Math.sqrt(dx * dx + dy * dy) > 10) {
           if (newLine == null) {
-            newLine = linesg.append("line").attr("class", "newLine").attr("data-testid", "custom-newLink");
+            newLine = linesg.append("line").attr("class", "newLine");
           }
           newLine
             .attr("x1", function (d: any) {
@@ -241,7 +240,7 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
      * @see [Event listener parameter](https://observablehq.com/@d3/d3v6-migration-guide#events)
      * @see [setTimeout](https://www.w3schools.com/jsref/met_win_settimeout.asp)
      */
-    function windowMouseup(even: any, d: any): any {
+    function windowMouseup(even: any, d: any): void {
       drawingLine = false;
       if (newLine != null) {
         if (selectedTargetNode != null) {
@@ -334,6 +333,6 @@ function initializeNodes(inputNodes: Node[]): any[] {
  *
  * @returns a list of D3 force-graph links
  */
-function initializeLinks(inputLinks: Node[]): any[] {
+function initializeLinks(inputLinks: Link[]): any[] {
   return inputLinks;
 }
