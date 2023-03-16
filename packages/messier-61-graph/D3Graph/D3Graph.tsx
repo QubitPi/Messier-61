@@ -94,6 +94,7 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
         .enter()
         .append("line")
         .attr("class", "link")
+        .attr("data-testid", "custom-link")
         .attr("x1", function (d: any) {
           return d.source.x;
         })
@@ -208,7 +209,7 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
         const dy = selectedSourceNode.y - y;
         if (Math.sqrt(dx * dx + dy * dy) > 10) {
           if (newLine == null) {
-            newLine = linesg.append("line").attr("class", "newLine");
+            newLine = linesg.append("line").attr("class", "newLine").attr("data-testid", "custom-newLink");
           }
           newLine
             .attr("x1", function (d: any) {
@@ -265,7 +266,6 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
 
     const linesg = svg.append("g");
     const circlesg = svg.append("g");
-    update();
   }, [nodes, links, svgRef.current]);
   const stylesName = [styles.g, styles.node, styles.line, styles.link, styles.newLine];
   return <svg ref={svgRef} width={width} height={height} className={stylesName.join(" ")}></svg>;
