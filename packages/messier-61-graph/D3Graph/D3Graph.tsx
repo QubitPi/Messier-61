@@ -45,7 +45,7 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
      * @see [D3 drag](https://github.com/d3/d3-drag/blob/v3.0.0/README.md#drag)
      * @see [key function](https://www.d3indepth.com/datajoins/#key-functions)
      */
-    function update(): any {
+    function update(): void {
       const node = circlesg
         .selectAll(".node")
         .data(nodes, function (d: any) {
@@ -158,14 +158,32 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
       update();
     }
 
+    /**
+     * Selects, when a button on a pointing device (such as a mouse or trackpad) is released while the pointer is located
+     * inside a node, a target node for new node connection if and only if the target node is not the source node.
+     *
+     * @param event An object that contains metadata about the event that triggers this listener function
+     * @param d The datum object bound to the execution context, such as
+     *
+     * @see [Event listener parameter](https://observablehq.com/@d3/d3v6-migration-guide#events)
+     */
     function nodeMouseover(d: any): any {
       if (drawingLine && d !== selectedSourceNode) {
         selectedTargetNode = d;
       }
     }
 
+    /**
+     * Prepare a target node selection by resetting the currently selected target node when a pointing device (usually a
+     * mouse) is used to move the cursor so that it is no longer contained within a node element.
+     *
+     * @param event An object that contains metadata about the event that triggers this listener function
+     * @param d The datum object bound to the execution context, such as
+     *
+     * @see [Event listener parameter](https://observablehq.com/@d3/d3v6-migration-guide#events)
+     */
     function nodeMouseout(d: any): any {
-      if (d !== selectedSourceNode) {
+      if (drawingLine) {
         selectedTargetNode = null;
       }
     }
@@ -189,8 +207,8 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
         const dx = selectedSourceNode.x - x;
         const dy = selectedSourceNode.y - y;
         if (Math.sqrt(dx * dx + dy * dy) > 10) {
-          if (newLine === "undefined") {
-            newLine = linesg.append("line").attr("class", "newLine").attr("data-testid", "custom-newLine");
+          if (newLine == null) {
+            newLine = linesg.append("line").attr("class", "newLine");
           }
           newLine
             .attr("x1", function (d: any) {
@@ -224,8 +242,8 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
      */
     function windowMouseup(even: any, d: any): any {
       drawingLine = false;
-      if (newLine !== "undefined") {
-        if (selectedTargetNode !== "undefined") {
+      if (newLine != null) {
+        if (selectedTargetNode != null) {
           selectedTargetNode.fixed = false;
           d = selectedTargetNode;
         }
@@ -238,7 +256,6 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
         // delete the on-flight line
         newLine.remove();
         newLine = null;
-
         selectedSourceNode = null;
         selectedTargetNode = null;
       }
