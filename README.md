@@ -2,7 +2,7 @@ Messier-61 <sup>![Node Version Badge is Missing][node version badge]</sup>
 ==========
 
 <div align="center">
-<img src="docs/static/img/logo.svg" width="200px" />
+<img src="https://raw.githubusercontent.com/QubitPi/Messier-61/master/docs/static/img/logo.svg" width="200px" />
 </div>
 
 [![npm registry][npm registry]](https://www.npmjs.com/package/messier-61)
