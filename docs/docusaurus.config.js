@@ -93,8 +93,8 @@ const config = {
           },
           {
             href: "https://qubitpi.github.io/Messier-61/api/",
-            position: 'left',
-            label: 'API'
+            label: "API",
+            position: "left",
           },
           {
             href: "https://github.com/QubitPi/Messier-61",

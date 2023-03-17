@@ -28,7 +28,6 @@ async function main() {
       "../packages/messier-61-app/index.tsx",
       "../packages/messier-61-app/App.tsx",
 
-
       "../packages/messier-61-editor/index.ts",
       "../packages/messier-61-editor/Lexical/index.ts",
       "../packages/messier-61-editor/Lexical/LexicalEditorConfig.ts",
@@ -48,11 +47,11 @@ async function main() {
 
       "../packages/messier-61-home/index.ts",
 
-      "../packages/messier-61-nlp/BasicSVOParser.ts"
+      "../packages/messier-61-nlp/BasicSVOParser.ts",
     ],
     entryPointStrategy: "expand",
     tsconfig: "../tsconfig.json",
-    media: "static/img/typedoc"
+    media: "static/img/typedoc",
   });
 
   const project = app.convert();
