@@ -28,9 +28,9 @@ const config = {
   tagline: "A Powerful External Brain",
   favicon: "img/favicon.ico",
 
-  url: "https://paion-data.github.io/",
+  url: "https://QubitPi.github.io/",
   baseUrl: "/Messier-61",
-  organizationName: "paion-data",
+  organizationName: "QubitPi",
   projectName: "Messier-61",
 
   onBrokenLinks: "throw",
@@ -92,7 +92,12 @@ const config = {
             label: "Documentations",
           },
           {
-            href: "https://github.com/paion-data/Messier-61",
+            href: "https://qubitpi.github.io/Messier-61/api/",
+            position: 'left',
+            label: 'API'
+          },
+          {
+            href: "https://github.com/QubitPi/Messier-61",
             label: "GitHub",
             position: "right",
           },
