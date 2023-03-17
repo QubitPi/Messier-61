@@ -13,16 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-const editorConfig = {
-  theme: {
-    ltr: "ltr",
-    rtl: "rtl",
-    placeholder: "editor-placeholder",
-    paragraph: "editor-paragraph",
-  },
-  onError(error: any) {
-    throw error;
-  },
-};
+import parse from "./RawTextParser";
 
-export default editorConfig;
+import happyPathJson from "./json/raw-text-parser-happy-path.json";
+
+test("Happy path JSON-encoded editor content gets parsed to list, each element of which is a line in editor", () => {
+  expect(parse(happyPathJson)).toStrictEqual(["I love apple", "I drink coffee", "He likes google"]);
+});
