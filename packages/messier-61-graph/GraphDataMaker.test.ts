@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { makeGraphFromSvoTripples } from "./GraphDataMaker";
+import { makeGraphDataFromSvoTripples } from "./GraphDataMaker";
 
 let counter = 1;
 
@@ -27,7 +27,7 @@ test("two separate tripples can be generated", () => {
     ["He", "likes", "Google"],
   ];
 
-  expect(makeGraphFromSvoTripples(tripples, constantIdGenerator)).toStrictEqual({
+  expect(makeGraphDataFromSvoTripples(tripples, constantIdGenerator)).toStrictEqual({
     nodes: [
       {
         id: "1",
@@ -69,7 +69,7 @@ test("3 nodes connected in a line can be generated", () => {
     ["I", "hate", "Tencent"],
   ];
 
-  expect(makeGraphFromSvoTripples(tripples, constantIdGenerator)).toStrictEqual({
+  expect(makeGraphDataFromSvoTripples(tripples, constantIdGenerator)).toStrictEqual({
     nodes: [
       {
         id: "1",

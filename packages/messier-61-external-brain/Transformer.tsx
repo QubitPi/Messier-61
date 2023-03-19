@@ -15,7 +15,7 @@
  */
 import type { GraphData } from "../messier-61-graph";
 
-import { makeGraphFromSvoTripples } from "../messier-61-graph/GraphDataMaker";
+import { makeGraphDataFromSvoTripples } from "../messier-61-graph/GraphDataMaker";
 import { getSVOof } from "../messier-61-nlp/BasicSVOParser";
 
 export function transformer(editorLines: string[]): GraphData {
@@ -23,7 +23,7 @@ export function transformer(editorLines: string[]): GraphData {
     .map((editorLine) => getSVOof(editorLine))
     .filter((pos) => pos.length === 3);
 
-  return makeGraphFromSvoTripples(svoTripples, randomIdGenerator);
+  return makeGraphDataFromSvoTripples(svoTripples, randomIdGenerator);
 }
 
 function randomIdGenerator(): string {
