@@ -41,3 +41,10 @@ svg.g.node text {
   stroke: none;
   font: 12px sans-serif;
 }
+
+svg.g.node path {
+  /* fill: rgba(255, 255, 255, 0.5); */
+  fill: rgba(142, 214, 244, 0.5);
+  /* fill: rgb(210, 213, 218, 0.5); */
+  stroke: none;
+}

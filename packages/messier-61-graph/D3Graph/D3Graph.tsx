@@ -28,6 +28,9 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
     let selectedTargetNode: any;
     let drawingLine = false;
     let newLine: any;
+    let arcMenu: any;
+    let menu: any;
+    let arcMenuMove: any;
 
     const nodes = initializeNodes(graphConfig.graphData.nodes);
     const links = initializeLinks(graphConfig.graphData.links);
@@ -68,7 +71,9 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
         .call(d3.drag)
         .attr("transform", function (d: any) {
           return `translate(${d.x as string}, ${d.y as string})`;
-        });
+        })
+        .on("mousemove", nodeMousemove)
+        .on("contextmenu", nodeContextmenu);
 
       nodeg
         .append("circle")
@@ -188,6 +193,65 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
       if (drawingLine) {
         selectedTargetNode = null;
       }
+      if(arcMenuMove){
+        arcMenuMove.remove();
+        arcMenuMove = null;
+      }
+    }
+
+    function nodeContextmenu(this: any, event: any, d: any): void {
+      const arcGenerator = d3.arc()
+        .padAngle(.02)
+        .padRadius(100)
+        .cornerRadius(4);
+
+      const arcData = [
+        { startAngle: 0, endAngle: 0.65 * Math.PI, innerRadius: 30, outerRadius: 80, label: "A", id: "1" },
+        { startAngle: 0.65 * Math.PI, endAngle: 1.35 * Math.PI, innerRadius: 30, outerRadius: 80, label: "B" },
+        { startAngle: 1.35 * Math.PI, endAngle: 2 * Math.PI, innerRadius: 30, outerRadius: 80, label: "C" }
+      ];
+
+      if (arcMenu == null && menu == null) {
+        arcMenu = d3.select(this)
+          .selectAll('path')
+          .data(arcData)
+          .join('path')
+          .attr('d', arcGenerator);
+
+        menu = d3.select(this)
+          .selectAll('text')
+          .data(arcData)
+          .join('text')
+          .each(function (d) {
+            const centroid = arcGenerator.centroid(d);
+            d3.select(this)
+              .attr('x', centroid[0])
+              .attr('y', centroid[1])
+              .attr('dy', '0.33em')
+              .text(d.label);
+          });
+      }else{
+        arcMenu.remove();
+        arcMenu = null;
+        menu.remove();
+        menu = null;
+      }
+    }
+
+    function nodeMousemove(this: any) {
+      if(arcMenuMove == null){
+      const arcGenerator = d3.arc();
+      const pathData = arcGenerator({
+        startAngle: 0,
+        endAngle: 2 * Math.PI,
+        innerRadius: 20,
+        outerRadius: 30
+      });
+
+      arcMenuMove = d3.select(this)
+        .append('path')
+        .attr('d', pathData);
+      }
     }
 
     /**
@@ -268,7 +332,7 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
     const linesg = svg.append("g");
     const circlesg = svg.append("g");
   }, [graphConfig, svgRef.current]);
-  const stylesName = [styles.g, styles.node, styles.line, styles.link, styles.newLine];
+  const stylesName = [styles.g, styles.node, styles.line, styles.link, styles.newLine, styles.path];
   return <svg ref={svgRef} width={width} height={height} className={stylesName.join(" ")}></svg>;
 }
 
