@@ -29,8 +29,11 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
     let drawingLine = false;
     let newLine: any;
     let arcMenu: any;
-    let menu: any;
-    let arcMenuMove: any;
+    let menuText: any;
+    let nodeMove: any;
+    let selectPathMove: any;
+    let pathNewLink = false;
+    let pathColor: any;
 
     const nodes = initializeNodes(graphConfig.graphData.nodes);
     const links = initializeLinks(graphConfig.graphData.links);
@@ -52,6 +55,7 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
      * @see [key function](https://www.d3indepth.com/datajoins/#key-functions)
      */
     function update(): void {
+
       const node = circlesg
         .selectAll(".node")
         .data(nodes, function (d: any) {
@@ -90,8 +94,10 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
         .append("foreignObject")
         .attr("width", 50)
         .attr("height", 50)
+        .attr("x",-10)
+        .attr("y",-15)
         .append("xhtml:body")
-        .style("font", "14px black 'Helvetica Neue'")
+        .style("font", "12px black 'sans-serif'")
         .html((d) => formatNodeLabel(d.name));
       node.exit().remove();
 
@@ -151,10 +157,21 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
      *
      * @see [Event listener parameter](https://observablehq.com/@d3/d3v6-migration-guide#events)
      */
-    function nodeMousedown(event: any, d: any): void {
+    function nodeMousedown(this: any, event: any, d: any): void {
       if (!drawingLine) {
         selectedSourceNode = d;
       }
+
+      if (pathColor == true) {
+        d3.select(this)
+          .style('fill', "rgb(255, 192, 203)")
+          .on('dblclick', function (d) {
+            d3.select(this)
+              .style('fill', "rgb(107, 174, 214)");
+          });
+      }
+
+      pathColor = false;
 
       drawingLine = true;
 
@@ -175,7 +192,7 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
      * @see [Event listener parameter](https://observablehq.com/@d3/d3v6-migration-guide#events)
      */
     function nodeMouseover(event: any, d: any): void {
-      if (drawingLine && d !== selectedSourceNode) {
+      if (drawingLine && d !== selectedSourceNode && pathNewLink == true) {
         selectedTargetNode = d;
       }
     }
@@ -193,9 +210,25 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
       if (drawingLine) {
         selectedTargetNode = null;
       }
-      if(arcMenuMove){
-        arcMenuMove.remove();
-        arcMenuMove = null;
+      if (nodeMove && arcMenu == null) {
+        nodeMove.remove();
+        nodeMove = null;
+      }
+    }
+
+    function nodeMousemove(this: any) {
+      if (nodeMove == null) {
+        const arcGenerator = d3.arc();
+        const pathData = arcGenerator({
+          startAngle: 0,
+          endAngle: 2 * Math.PI,
+          innerRadius: 20,
+          outerRadius: 30
+        });
+
+        nodeMove = d3.select(this)
+          .append('path')
+          .attr('d', pathData);
       }
     }
 
@@ -204,21 +237,24 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
         .padAngle(.02)
         .padRadius(100)
         .cornerRadius(4);
-
       const arcData = [
-        { startAngle: 0, endAngle: 0.65 * Math.PI, innerRadius: 30, outerRadius: 80, label: "A", id: "1" },
-        { startAngle: 0.65 * Math.PI, endAngle: 1.35 * Math.PI, innerRadius: 30, outerRadius: 80, label: "B" },
-        { startAngle: 1.35 * Math.PI, endAngle: 2 * Math.PI, innerRadius: 30, outerRadius: 80, label: "C" }
+        { startAngle: 0, endAngle: 0.65 * Math.PI, innerRadius: 30, outerRadius: 70, label: "change color", id: "changeColor" },
+        { startAngle: 0.65 * Math.PI, endAngle: 1.35 * Math.PI, innerRadius: 30, outerRadius: 70, label: "add newLink", id: "addNewLink" },
+        { startAngle: 1.35 * Math.PI, endAngle: 2 * Math.PI, innerRadius: 30, outerRadius: 70, label: "C", id: "3" }
       ];
 
-      if (arcMenu == null && menu == null) {
+      if (arcMenu == null && menuText == null) {
         arcMenu = d3.select(this)
           .selectAll('path')
           .data(arcData)
           .join('path')
-          .attr('d', arcGenerator);
+          .attr('d', arcGenerator)
+          .attr('id', function (d) { return d.id })
+          .on('mousemove', pathMousemove)
+          .on("mouseout", pathMouseout)
+          .on("mousedown", pathMousedown);
 
-        menu = d3.select(this)
+        menuText = d3.select(this)
           .selectAll('text')
           .data(arcData)
           .join('text')
@@ -230,27 +266,41 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
               .attr('dy', '0.33em')
               .text(d.label);
           });
-      }else{
-        arcMenu.remove();
-        arcMenu = null;
-        menu.remove();
-        menu = null;
       }
     }
 
-    function nodeMousemove(this: any) {
-      if(arcMenuMove == null){
-      const arcGenerator = d3.arc();
-      const pathData = arcGenerator({
-        startAngle: 0,
-        endAngle: 2 * Math.PI,
-        innerRadius: 20,
-        outerRadius: 30
-      });
+    function pathMousemove(this: any) {
+      if (selectPathMove == null) {
+        selectPathMove = d3.select(this)
+          .style("fill", "rgba(142, 214, 244, 0.7)");
+      }
+    }
 
-      arcMenuMove = d3.select(this)
-        .append('path')
-        .attr('d', pathData);
+    function pathMouseout(this: any) {
+      if (selectPathMove) {
+        selectPathMove = d3.select(this)
+          .style("fill", "rgba(142, 214, 244, 0.5)");
+        selectPathMove = null;
+      }
+    }
+
+    function pathMousedown(this: any) {
+      d3.select(this)
+        .style("fill", "rgba(142, 214, 244)");
+      if (this.id == "addNewLink") {
+        pathNewLink = true;
+      }
+      if (this.id == "changeColor") {
+        pathColor = true;
+      }
+    }
+
+    function windowClick() {
+      if (arcMenu != null && menuText != null) {
+        arcMenu.remove();
+        arcMenu = null;
+        menuText.remove();
+        menuText = null;
       }
     }
 
@@ -272,7 +322,7 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
         const y = Math.max(0, Math.min(height, pointerLocation[1]));
         const dx = selectedSourceNode.x - x;
         const dy = selectedSourceNode.y - y;
-        if (Math.sqrt(dx * dx + dy * dy) > 10) {
+        if (Math.sqrt(dx * dx + dy * dy) > 10 && pathNewLink == true) {
           if (newLine == null) {
             newLine = linesg.append("line").attr("class", "newLine");
           }
@@ -324,10 +374,11 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
         newLine = null;
         selectedSourceNode = null;
         selectedTargetNode = null;
+        pathNewLink = false;
       }
     }
 
-    d3.select(svgRef.current).on("mouseup", windowMouseup).on("mousemove", windowMousemove);
+    d3.select(svgRef.current).on("mouseup", windowMouseup).on("mousemove", windowMousemove).on("click", windowClick);
 
     const linesg = svg.append("g");
     const circlesg = svg.append("g");
