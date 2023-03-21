@@ -8,5 +8,5 @@ test("lable on node style", () => {
 
   expect(formatNodeLabel(shortString)).toBe("1234");
   expect(formatNodeLabel(mediumString)).toBe("1234\n567");
-  expect(formatNodeLabel(longString)).toBe("1234...");
+  expect(formatNodeLabel(longString)).toBe("1234\n5...");
 });

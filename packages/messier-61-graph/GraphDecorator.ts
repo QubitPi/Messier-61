@@ -5,9 +5,9 @@ export function formatNodeLabel(label: string): any {
   }
 
   if (label.length >= 5 && label.length < 10) {
-    label = label.substring(0, 4) + "\n" + label.substring(4, 10);
+    label = label.substring(0, 4) + "\n" + label.substring(4, 9);
   } else {
-    label = label.substring(0, 4) + "...";
+    label = label.substring(0, 4) + "\n" + label.substring(4, 5) + "...";
   }
   return label;
 }

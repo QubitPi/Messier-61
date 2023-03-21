@@ -7,7 +7,7 @@ import { formatNodeLabel } from "../GraphDecorator";
 
 const DEFAULT_LINK_DISTANCE = 90;
 const DEFAULT_FORCE_STRENGTH = -30;
-const DEFAULT_CIRCULE_RADIUS = 20;
+const DEFAULT_CIRCULE_RADIUS = 25;
 
 /**
  * Generates a D3 graph whose content is defined by a provided {@link GraphConfig.GraphData}.
@@ -92,12 +92,11 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
 
       nodeg
         .append("foreignObject")
-        .attr("width", 50)
-        .attr("height", 50)
-        .attr("x",-10)
+        .attr("width", 30)
+        .attr("height", 30)
+        .attr("x",-15)
         .attr("y",-15)
         .append("xhtml:body")
-        .style("font", "12px black 'sans-serif'")
         .html((d) => formatNodeLabel(d.name));
       node.exit().remove();
 
@@ -222,8 +221,8 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
         const pathData = arcGenerator({
           startAngle: 0,
           endAngle: 2 * Math.PI,
-          innerRadius: 20,
-          outerRadius: 30
+          innerRadius: 25,
+          outerRadius: 35
         });
 
         nodeMove = d3.select(this)
@@ -238,9 +237,9 @@ export function D3Graph(graphConfig: GraphConfig): JSX.Element {
         .padRadius(100)
         .cornerRadius(4);
       const arcData = [
-        { startAngle: 0, endAngle: 0.65 * Math.PI, innerRadius: 30, outerRadius: 70, label: "change color", id: "changeColor" },
-        { startAngle: 0.65 * Math.PI, endAngle: 1.35 * Math.PI, innerRadius: 30, outerRadius: 70, label: "add newLink", id: "addNewLink" },
-        { startAngle: 1.35 * Math.PI, endAngle: 2 * Math.PI, innerRadius: 30, outerRadius: 70, label: "C", id: "3" }
+        { startAngle: 0, endAngle: 0.65 * Math.PI, innerRadius: 35, outerRadius: 70, label: "change color", id: "changeColor" },
+        { startAngle: 0.65 * Math.PI, endAngle: 1.35 * Math.PI, innerRadius: 35, outerRadius: 70, label: "add newLink", id: "addNewLink" },
+        { startAngle: 1.35 * Math.PI, endAngle: 2 * Math.PI, innerRadius: 35, outerRadius: 70, label: "C", id: "3" }
       ];
 
       if (arcMenu == null && menuText == null) {

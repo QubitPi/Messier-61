@@ -42,6 +42,12 @@ svg.g.node text {
   font: 12px sans-serif;
 }
 
+svg.g.node foreignObject {
+  stroke: none;
+  font: 12px sans-serif;
+  color: aliceblue;
+}
+
 svg.g.node path {
   /* fill: rgba(255, 255, 255, 0.5); */
   fill: rgba(142, 214, 244, 0.5);
