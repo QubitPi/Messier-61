@@ -108,7 +108,7 @@ _Note_: **If our param does not start with `-` or `--`, then having an explicit 
 better to do it anyway for clarity**.
 
 ```bash
-npm start ./data.json    // invokes `npx ts-node src/server.ts ./data.json`
+npm start ./data.json // invokes `npx ts-node src/server.ts ./data.json`
 ```
 
 Refernce: [Sending command line arguments to npm script](https://stackoverflow.com/a/14404223)
