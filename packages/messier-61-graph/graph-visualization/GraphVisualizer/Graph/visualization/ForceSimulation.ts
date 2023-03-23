@@ -40,7 +40,7 @@ const VELOCITY_DECAY = 0.4;
 
 const FORCE_COLLIDE_RADIUS = (node: NodeModel): number => node.radius + 25;
 const FORCE_LINK_DISTANCE = (relationship: RelationshipModel): number =>
-  relationship.source.radius + relationship.target.radius + LINK_DISTANCE * 2
+  relationship.source.radius + relationship.target.radius + LINK_DISTANCE * 2;
 
 /**
  * {@link ForceSimulation} is a wrapper of [d3-force Simulation](https://github.com/d3/d3-force#simulation).
@@ -51,9 +51,9 @@ export class ForceSimulation {
 
   /**
    * Creates a new simulation with no nodes initially.
-   * 
+   *
    * The simulator is not started. In addition,
-   * 
+   *
    * - The [velocity decay factor](https://github.com/d3/d3-force#simulation_velocityDecay) is set to 0.4
    * - Graph nodes repels each other with a strength of -400
    * - The nodes are attracted towards the canvas center, i.e. (0, 0), with the strength of 0.03 on both X and Y
@@ -88,14 +88,14 @@ export class ForceSimulation {
 
   /**
    * Re-apply force to links of a graph.
-   * 
+   *
    * @param graph the graph whose relationships are to be re-simulated
    */
   public updateRelationships(graph: GraphModel): void {
     this.simulation.force(
       "link",
       forceLink<NodeModel, RelationshipModel>(this.getAllRelationshipsPerPairOfNodes(graph.relationships))
-        .id(node => node.id)
+        .id((node) => node.id)
         .distance(FORCE_LINK_DISTANCE)
     );
   }
@@ -116,8 +116,8 @@ export class ForceSimulation {
 
     this.simulation.restart().on("end", () => {
       onEnd();
-      this.simulation.on("end", null)
-    })
+      this.simulation.on("end", null);
+    });
   }
 
   /**
@@ -145,7 +145,7 @@ export class ForceSimulation {
 
   /**
    * A side-effect method which, given a list of nodes, computes the position of dangling nodes in the list if they are
-   * to be positioned in a circle pattern. 
+   * to be positioned in a circle pattern.
    *
    * @param nodes A list of nodes which contains all the dangling nodes, whose (x, y) coordinates are to be computed
    * @param center The coordinates of the center of the circle
@@ -164,9 +164,9 @@ export class ForceSimulation {
   /**
    * Given a list of relationships, this method filters out all "duplicate" relationships connecting the same pair of
    * nodes.
-   * 
+   *
    * For example, if the relationships are
-   * 
+   *
    * [
    *   {
    *     "source": "node1",
@@ -181,9 +181,9 @@ export class ForceSimulation {
    *     "target": "node6"
    *   },
    * ]
-   * 
+   *
    * then this method returns
-   * 
+   *
    * [
    *   {
    *     "source": "node1",
@@ -194,14 +194,15 @@ export class ForceSimulation {
    *     "target": "node6"
    *   },
    * ]
-   * 
+   *
    * @param relationships the specified list of relationshiops to be filtered
    *
    * @returns a sub-list of relationships, each of which connects a unique pair of nodes
    */
   private getAllRelationshipsPerPairOfNodes(relationships: RelationshipModel[]): RelationshipModel[] {
-    return relationships.filter((relationship, idx, self) => 
-      idx === self.findIndex((it) => it.source === relationship.source && it.target === relationship.target)
+    return relationships.filter(
+      (relationship, idx, self) =>
+        idx === self.findIndex((it) => it.source === relationship.source && it.target === relationship.target)
     );
   }
 }
