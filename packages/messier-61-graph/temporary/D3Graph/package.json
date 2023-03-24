@@ -1,0 +1,28 @@
+{
+  "name": "@paion-data/this-is-to-be-removed",
+  "version": "0.1.0",
+  "engines": {
+    "node": ">=16.0.0 <18.0.0"
+  },
+  "author": "Paion Data Development Team",
+  "license": "Apache-2.0",
+  "scripts": {
+    "build": "rollup -c --failAfterWarnings",
+    "test": "tsc --noEmit",
+    "prepublishOnly": "npm run test && npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/paion-data/Messier-61.git"
+  },
+  "files": [
+    "dist",
+    "package.json",
+    "README.md",
+    "LICENSE"
+  ],
+  "dependencies": {
+    "@types/d3": "^7.4.0",
+    "d3": "^7.8.2"
+  }
+}
