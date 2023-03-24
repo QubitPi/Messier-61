@@ -25,6 +25,8 @@
   ],
   "dependencies": {
     "@types/d3-force": "^3.0.4",
-    "d3-force": "^3.0.0"
+    "@types/d3-selection": "^3.0.5",
+    "d3-force": "^3.0.0",
+    "d3-selection": "^3.0.0"
   }
 }
