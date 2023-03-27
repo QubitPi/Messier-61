@@ -15,16 +15,12 @@
  */
 const TypeDoc = require("typedoc");
 
-const retCode = -1;
-
 const app = new TypeDoc.Application();
 
-// Ask TypeDoc to load tsconfig.json and typedoc.json files
 app.options.addReader(new TypeDoc.TSConfigReader());
 app.options.addReader(new TypeDoc.TypeDocReader());
 
 app.bootstrap({
-  // typedoc options
   entryPoints: ["../packages/"],
   exclude: "../**/*+(test|env.d|setupTests).*",
   entryPointStrategy: "expand",
@@ -34,15 +30,10 @@ app.bootstrap({
 
 const project = app.convert();
 
-// Project has converted correctly
-if (project) {
-  const outputDir = "./build/api";
-
-  // Rendered docs
-  app.generateDocs(project, outputDir);
-
-  // Alternatively generate JSON output
-  app.generateJson(project, outputDir + "/documentation.json");
-} else {
-  throw new Error(`app.convert() was not successful`);
+if (!project) {
+  throw new Error(`app.convert() was not successful`); // early return
 }
+
+const outputDir = "./build/api";
+app.generateDocs(project, outputDir);
+app.generateJson(project, outputDir + "/documentation.json");
