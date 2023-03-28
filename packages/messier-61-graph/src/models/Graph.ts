@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import _ from "lodash";
 import type { NodeModel } from "./Node";
 import type { RelationshipModel } from "./Relationship";
-
-import * as _ from "lodash";
 
 export class GraphModel {
   private _nodes: NodeModel[];
