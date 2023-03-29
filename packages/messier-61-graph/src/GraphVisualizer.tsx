@@ -1,3 +1,18 @@
+/*
+ * Copyright Jiaqi Liu
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 import { useEffect, useState } from "react";
 import { GraphStyleModel } from "./models/GraphStyle";
 import { NodeModel } from "./models/Node";
@@ -5,6 +20,10 @@ import { RelationshipModel } from "./models/Relationship";
 import { VizItem } from "./VizItem";
 import { GetNodeNeigtborsFn } from "./GraphEventHandlerModel"
 import { debounce } from "lodash-es";
+import deepmerge from "deepmerge";
+import { GraphStats } from "./GraphStats";
+import { StyledFullSizeContainer } from "./styles/GraphVisualizerStyled";
+import { Graph } from "./Graph";
 
 export interface GraphVisualizerProps {
   nodes: NodeModel[],
@@ -14,8 +33,12 @@ export interface GraphVisualizerProps {
   updateStyle: (style: any) => void,
 
   nodeLimitHit: boolean,
+  maxNumNeighbors: number,
   useGeneratedDefaultColors: boolean,
   nodePropertiesExpandedByDefault: boolean
+
+  getNeighbors: (nodeId: string, currentNeighborIds: string[])
+    => Promise<{ nodes: NodeModel[], relationships: RelationshipModel[], allNeighborsCount: number }>
 }
 
 /**
@@ -38,6 +61,14 @@ export const PANEL_MIN_WIDTH = 200
 export const defaultPanelWidth = (): number =>
   Math.max(window.innerWidth / 5, PANEL_MIN_WIDTH)
 
+/**
+ * Responsible mainly for the graph styling. TODO - considering renaming GraphVisualizer to reflect the "styling"
+ * concern.
+ *
+ * @param props Standard Component Props
+ *
+ * @returns a new React component
+ */
 export function GraphVisualizer(props: GraphVisualizerProps): JSX.Element {
   const [nodes, setNodes] = useState<NodeModel>(this.props.nodes)
   const [relationshiops, setRelationships] = useState<RelationshipModel>(this.props.relationshiops)
@@ -58,24 +89,45 @@ export function GraphVisualizer(props: GraphVisualizerProps): JSX.Element {
 
   const [width, setWidth] = useState<number>(defaultPanelWidth());
   const [freezeLegend, setFreezeLegend] = useState<boolean>(false);
-  const [stats, setStats] = useState({ labels: {}, relTypes: {} })
+  const [stats, setStats] = useState<GraphStats>({ labels: {}, relationshipTypes: {} })
   const [graphStyle, setGraphStyle] = useState<GraphStyleModel>(
     new GraphStyleModel(this.props.useGeneratedDefaultColors)
-    )
+  )
   const [styleVersion, setStyleVersion] = useState<number>(0);
   const [nodePropertiesExpanded, setNodePropertiesExpandedByDefault] = useState<boolean>(
     this.props.nodePropertiesExpandedByDefault
-    )
-
+  )
 
   const defaultStyle = graphStyle.toSheet();
 
   if (props.graphStyleData != null) {
-    graphStyle.loadRules(deepMerge(this.defaultStyle, this.props.graphStyleData))
+    graphStyle.loadRules(deepmerge(this.defaultStyle, this.props.graphStyleData))
   }
 
-  const getNodeNeighbors: GetNodeNeigtborsFn = (node, currentNeighborIds, callback) => {
+  const getNodeNeighbors: GetNodeNeigtborsFn = (
+    node,
+    currentNeighborIds,
+    callback
+  ) => {
+    if (currentNeighborIds.length > this.props.maxNumNeighbors) {
+      callback([], []);
+    }
 
+    if (this.props.getNeighbors != null) {
+      this.props.getNeighbors(node.id, currentNeighborIds).then(
+        ({ nodes, relationships, allNeighborCount }) => {
+          if (allNeighborCount > this.props.maxNumNeighbors) {
+            setSelectedItem({
+              type: "status-item",
+              item: `Rendering was limited to ${this.props.maxNeighbours} of the node's total ${allNeighborCount} neighbours due to browser config maxNeighbours.`
+            })
+          }
+          callback(nodes, relationships)
+
+        },
+        () => callback([], [])
+      )
+    }
   }
 
   function onItemMouseOver(item: VizItem): void {
@@ -98,7 +150,7 @@ export function GraphVisualizer(props: GraphVisualizerProps): JSX.Element {
     this.props.updateStyle(graphStyle.toSheet());
 
     if (this.props.graphStyleData != null) {
-      this.props.graphStyle.loadRules(deepMerge(this.defaultStyle, this.props.graphStyleData))
+      this.props.graphStyle.loadRules(deepmerge(this.defaultStyle, this.props.graphStyleData))
       setGraphStyle(graphStyle);
       setStyleVersion(styleVersion + 1);
     } else {
