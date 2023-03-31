@@ -33,26 +33,23 @@ import { RelationshipLayout } from "./RelationshipLayout";
  * limitations under the License.
  */
 export class GraphGeometryModel {
-
   private style: GraphStyleModel;
   private canvas: HTMLCanvasElement;
   private relationshipLayout: RelationshipLayout;
 
   /**
-   * Creates a 
-   * @param style 
+   * Creates a
+   * @param style
    */
   constructor(style: GraphStyleModel) {
     this.style = style;
-    this.relationshipLayout = new RelationshipLayout(this.style)
+    this.relationshipLayout = new RelationshipLayout(this.style);
     this.canvas = document.createElement("canvas");
   }
 
   public ontick(graph: GraphModel): void {
-    this
+    this;
   }
 
-  public onGraphChange(graph: GraphModel, options = { updateNodes: true, updateRelationships: true }): void {
-    
-  }
+  public onGraphChange(graph: GraphModel, options = { updateNodes: true, updateRelationships: true }): void {}
 }

@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import styled from 'styled-components'
+import styled from "styled-components";
 
 export const StyledFullSizeContainer = styled.div`
   position: relative;
   height: 100%;
-`
+`;

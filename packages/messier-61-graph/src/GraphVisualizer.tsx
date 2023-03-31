@@ -18,7 +18,7 @@ import { GraphStyleModel } from "./models/GraphStyle";
 import { NodeModel } from "./models/Node";
 import { RelationshipModel } from "./models/Relationship";
 import { VizItem } from "./VizItem";
-import { GetNodeNeigtborsFn } from "./GraphEventHandlerModel"
+import { GetNodeNeigtborsFn } from "./GraphEventHandlerModel";
 import { debounce } from "lodash-es";
 import deepmerge from "deepmerge";
 import { GraphStats } from "./GraphStats";
@@ -26,40 +26,41 @@ import { StyledFullSizeContainer } from "./styles/GraphVisualizerStyled";
 import { Graph } from "./Graph";
 
 export interface GraphVisualizerProps {
-  nodes: NodeModel[],
-  relationships: RelationshipModel[],
+  nodes: NodeModel[];
+  relationships: RelationshipModel[];
 
-  graphStyleData: any,
-  updateStyle: (style: any) => void,
+  graphStyleData: any;
+  updateStyle: (style: any) => void;
 
-  nodeLimitHit: boolean,
-  maxNumNeighbors: number,
-  useGeneratedDefaultColors: boolean,
-  nodePropertiesExpandedByDefault: boolean
+  nodeLimitHit: boolean;
+  maxNumNeighbors: number;
+  useGeneratedDefaultColors: boolean;
+  nodePropertiesExpandedByDefault: boolean;
 
-  getNeighbors: (nodeId: string, currentNeighborIds: string[])
-    => Promise<{ nodes: NodeModel[], relationships: RelationshipModel[], allNeighborsCount: number }>
+  getNeighbors: (
+    nodeId: string,
+    currentNeighborIds: string[]
+  ) => Promise<{ nodes: NodeModel[]; relationships: RelationshipModel[]; allNeighborsCount: number }>;
 }
 
 /**
  * The min width of the panel showing node properties on the right side of the window shown in the green box below:
- * 
+ *
  * <img src="media://panel-width-illustration.png" width="100%" />
  */
-export const PANEL_MIN_WIDTH = 200
+export const PANEL_MIN_WIDTH = 200;
 
 /**
  * The strategy for getting the width of the panel showing node properties on the right side of the window shown in the
  * green box below:
- * 
+ *
  * <img src="media://panel-width-illustration.png" width="100%" />
- * 
+ *
  * The width is the smaller of window-width / 5 and {@link PANEL_MIN_WIDTH}
- * 
+ *
  * @returns a functional object
  */
-export const defaultPanelWidth = (): number =>
-  Math.max(window.innerWidth / 5, PANEL_MIN_WIDTH)
+export const defaultPanelWidth = (): number => Math.max(window.innerWidth / 5, PANEL_MIN_WIDTH);
 
 /**
  * Responsible mainly for the graph styling. TODO - considering renaming GraphVisualizer to reflect the "styling"
@@ -70,45 +71,42 @@ export const defaultPanelWidth = (): number =>
  * @returns a new React component
  */
 export function GraphVisualizer(props: GraphVisualizerProps): JSX.Element {
-  const [nodes, setNodes] = useState<NodeModel>(this.props.nodes)
-  const [relationshiops, setRelationships] = useState<RelationshipModel>(this.props.relationshiops)
+  const [nodes, setNodes] = useState<NodeModel>(this.props.nodes);
+  const [relationshiops, setRelationships] = useState<RelationshipModel>(this.props.relationshiops);
 
   const [selectedItem, setSelectedItem] = useState<VizItem>(
     this.props.nodeLimitHit
-    ? {
-      type: "status-item",
-      item: "Not all return nodes are being displayed due to Initial Node Display setting."
-        + "Only first ${this.props.nodes.length} nodes are displayed."
-    }
-    : {
-      type: "canvas",
-      item: { nodeCount: props.nodes.length, relationshipCount: props.relationships.length }
-    }
+      ? {
+          type: "status-item",
+          item:
+            "Not all return nodes are being displayed due to Initial Node Display setting." +
+            "Only first ${this.props.nodes.length} nodes are displayed.",
+        }
+      : {
+          type: "canvas",
+          item: { nodeCount: props.nodes.length, relationshipCount: props.relationships.length },
+        }
   );
   const [hoveredItem, setHoveredItem] = useState<VizItem>(selectedItem);
 
   const [width, setWidth] = useState<number>(defaultPanelWidth());
   const [freezeLegend, setFreezeLegend] = useState<boolean>(false);
-  const [stats, setStats] = useState<GraphStats>({ labels: {}, relationshipTypes: {} })
+  const [stats, setStats] = useState<GraphStats>({ labels: {}, relationshipTypes: {} });
   const [graphStyle, setGraphStyle] = useState<GraphStyleModel>(
     new GraphStyleModel(this.props.useGeneratedDefaultColors)
-  )
+  );
   const [styleVersion, setStyleVersion] = useState<number>(0);
   const [nodePropertiesExpanded, setNodePropertiesExpandedByDefault] = useState<boolean>(
     this.props.nodePropertiesExpandedByDefault
-  )
+  );
 
   const defaultStyle = graphStyle.toSheet();
 
   if (props.graphStyleData != null) {
-    graphStyle.loadRules(deepmerge(this.defaultStyle, this.props.graphStyleData))
+    graphStyle.loadRules(deepmerge(this.defaultStyle, this.props.graphStyleData));
   }
 
-  const getNodeNeighbors: GetNodeNeigtborsFn = (
-    node,
-    currentNeighborIds,
-    callback
-  ) => {
+  const getNodeNeighbors: GetNodeNeigtborsFn = (node, currentNeighborIds, callback) => {
     if (currentNeighborIds.length > this.props.maxNumNeighbors) {
       callback([], []);
     }
@@ -119,29 +117,30 @@ export function GraphVisualizer(props: GraphVisualizerProps): JSX.Element {
           if (allNeighborCount > this.props.maxNumNeighbors) {
             setSelectedItem({
               type: "status-item",
-              item: `Rendering was limited to ${this.props.maxNeighbours} of the node's total ${allNeighborCount} neighbours due to browser config maxNeighbours.`
-            })
+              item: `Rendering was limited to ${this.props.maxNeighbours} of the node's total ${allNeighborCount} neighbours due to browser config maxNeighbours.`,
+            });
           }
-          callback(nodes, relationships)
-
+          callback(nodes, relationships);
         },
         () => callback([], [])
-      )
+      );
     }
-  }
+  };
 
   function onItemMouseOver(item: VizItem): void {
-    debounce((hoveredItem: VizItem) => { setHoveredItem(hoveredItem) }, 200)
+    debounce((hoveredItem: VizItem) => {
+      setHoveredItem(hoveredItem);
+    }, 200);
   }
 
   function onItemSelect(item: VizItem): void {
-    setSelectedItem(item)
+    setSelectedItem(item);
   }
 
   function onGraphModelChange(stats: GraphStats): void {
     setStats(stats);
     if (this.props.updateStyle != null) {
-      this.props.updateStyle(graphStyle.toSheet())
+      this.props.updateStyle(graphStyle.toSheet());
     }
   }
 
@@ -150,14 +149,14 @@ export function GraphVisualizer(props: GraphVisualizerProps): JSX.Element {
     this.props.updateStyle(graphStyle.toSheet());
 
     if (this.props.graphStyleData != null) {
-      this.props.graphStyle.loadRules(deepmerge(this.defaultStyle, this.props.graphStyleData))
+      this.props.graphStyle.loadRules(deepmerge(this.defaultStyle, this.props.graphStyleData));
       setGraphStyle(graphStyle);
       setStyleVersion(styleVersion + 1);
     } else {
       graphStyle.resetToDefault();
       setFreezeLegend(true);
     }
-  }, [this.props.graphStyleData])
+  }, [this.props.graphStyleData]);
 
   return (
     <StyledFullSizeContainer id="svg-vis">
@@ -175,9 +174,7 @@ export function GraphVisualizer(props: GraphVisualizerProps): JSX.Element {
         getAutoCompleteCallback={this.props.getAutoCompleteCallback}
         autocompleteRelationships={this.props.autocompleteRelationships}
         setGraph={this.props.setGraph}
-        offset={
-          (this.state.nodePropertiesExpanded ? this.state.width + 8 : 0) + 8
-        }
+        offset={(this.state.nodePropertiesExpanded ? this.state.width + 8 : 0) + 8}
         wheelZoomRequiresModKey={this.props.wheelZoomRequiresModKey}
         wheelZoomInfoMessageEnabled={this.props.wheelZoomInfoMessageEnabled}
         disableWheelZoomInfoMessage={this.props.disableWheelZoomInfoMessage}
@@ -191,21 +188,16 @@ export function GraphVisualizer(props: GraphVisualizerProps): JSX.Element {
         selectedItem={this.state.selectedItem}
         stats={this.state.stats}
         width={this.state.width}
-        setWidth={(width: number) =>
-          this.setState({ width: Math.max(panelMinWidth, width) })
-        }
+        setWidth={(width: number) => this.setState({ width: Math.max(panelMinWidth, width) })}
         expanded={this.state.nodePropertiesExpanded}
         toggleExpanded={() => {
-          const { nodePropertiesExpanded } = this.state
-          this.props.setNodePropertiesExpandedByDefault(
-            !nodePropertiesExpanded
-          )
-          this.setState({ nodePropertiesExpanded: !nodePropertiesExpanded })
+          const { nodePropertiesExpanded } = this.state;
+          this.props.setNodePropertiesExpandedByDefault(!nodePropertiesExpanded);
+          this.setState({ nodePropertiesExpanded: !nodePropertiesExpanded });
         }}
         DetailsPaneOverride={this.props.DetailsPaneOverride}
         OverviewPaneOverride={this.props.OverviewPaneOverride}
       />
     </StyledFullSizeContainer>
-  )
+  );
 }
-

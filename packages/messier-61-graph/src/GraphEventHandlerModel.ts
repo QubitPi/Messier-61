@@ -39,18 +39,12 @@ export class GraphEventHandlerModel {
 
   //selectedItem: NodeModel | RelationshipModel | null;
 
-  constructor(
-    graph: GraphModel,
-    visualization: Visualization,
-    getNodeNeighbors: GetNodeNeigtborsFn,
-  ) {
+  constructor(graph: GraphModel, visualization: Visualization, getNodeNeighbors: GetNodeNeigtborsFn) {
     this.graph = graph;
     this.visualization = visualization;
 
-    this.getNodeNeighbors = getNodeNeighbors
+    this.getNodeNeighbors = getNodeNeighbors;
   }
 
-  public bindEventHandlers(): void {
-
-  }
+  public bindEventHandlers(): void {}
 }

@@ -23,13 +23,13 @@ import { GraphGeometryModel } from "./GraphGeometryModel";
 import { ZoomLimitsReached } from "./ZoomLimitsReached";
 
 export enum ZoomType {
-  IN = 'in',
-  OUT = 'out',
-  FIT = 'fit'
+  IN = "in",
+  OUT = "out",
+  FIT = "fit",
 }
 
-export const ZOOM_MIN_SCALE = 0.1
-export const ZOOM_MAX_SCALE = 2
+export const ZOOM_MIN_SCALE = 0.1;
+export const ZOOM_MAX_SCALE = 2;
 
 export const CANVAS_CLICKED_EVENT_NAME = "canvasClicked";
 
@@ -52,7 +52,7 @@ export class Visualization {
   private isPanning = false;
   private isZoomClick = false;
   private wheelZoomRequiresModifierKey: boolean;
-  private zoomBehavior: ZoomBehavior<SVGElement, unknown>
+  private zoomBehavior: ZoomBehavior<SVGElement, unknown>;
 
   private callbacks: Record<string, undefined | Array<(...args: any[]) => void>> = {};
 
@@ -68,12 +68,12 @@ export class Visualization {
     onDisplayZoomWheelInfoMessage: () => void,
 
     initialZoomToFit: boolean,
-    onZoomEvent: (zoomLimitReached: ZoomLimitsReached) => void,
+    onZoomEvent: (zoomLimitReached: ZoomLimitsReached) => void
   ) {
     this.root = d3Select(element);
 
     this.root.selectAll("g").remove(); // Remove base group element when re-creating the visualization
-    this.baseGroup = this.root.append("g").attr("transform", "translate(0, 0)")
+    this.baseGroup = this.root.append("g").attr("transform", "translate(0, 0)");
 
     this.rect = this.baseGroup
       .append("rect")
@@ -111,15 +111,15 @@ export class Visualization {
         const currentZoomScale = event.transform.k;
         const zoomLimitsReached: ZoomLimitsReached = {
           zoomInLimitReached: currentZoomScale >= ZOOM_MAX_SCALE,
-          zoomOutLimitReached: currentZoomScale <= ZOOM_MIN_SCALE
-        }
+          zoomOutLimitReached: currentZoomScale <= ZOOM_MIN_SCALE,
+        };
 
         onZoomEvent(zoomLimitsReached);
 
         return this.gContainer
           .transition()
           .duration(wasZoomClick ? 400 : 20)
-          .call(containerSelection => (wasZoomClick ? containerSelection.ease(easeCubic) : containerSelection))
+          .call((containerSelection) => (wasZoomClick ? containerSelection.ease(easeCubic) : containerSelection))
           .attr("transform", String(event.transform));
       })
       // This is the default implementation of wheelDelta function in d3-zoom v3.0.0
@@ -127,10 +127,8 @@ export class Visualization {
       // but it should be the same (and indeed it works at runtime).
       // https://github.com/d3/d3-zoom/blob/1bccd3fd56ea24e9658bd7e7c24e9b89410c8967/README.md#zoom_wheelDelta
       // Keps the zoom behavior constant for metam ctrl and shift key. Otherwise scrolling is faster with ctrl key.
-      .wheelDelta(
-        e => -e.deltaY * (e.deltaMode === 1 ? 0.05 : e.deltaMode ? 1 : 0.002)
-      )
-      .filter(event => {
+      .wheelDelta((e) => -e.deltaY * (e.deltaMode === 1 ? 0.05 : e.deltaMode ? 1 : 0.002))
+      .filter((event) => {
         if (event.type === "wheel") {
           const modKeySelected = event.metaKey || event.ctrlKey || event.shiftKey;
           if (this.wheelZoomRequiresModifierKey && !modKeySelected) {
@@ -144,7 +142,7 @@ export class Visualization {
     this.root
       .call(this.zoomBehavior)
       .on("click.zoom", () => (this.isPanning = false))
-      .on("dblclick.zoom", null);    
+      .on("dblclick.zoom", null);
   }
 
   public init(): void {
@@ -152,7 +150,7 @@ export class Visualization {
       .selectAll("g.layer")
       .data(["relationships", "nodes"])
       .join("g")
-      .attr("class", d => `layer ${d}`)
+      .attr("class", (d) => `layer ${d}`);
 
     this.updateNodes();
     this.updateRelationships();
@@ -162,16 +160,12 @@ export class Visualization {
   }
 
   public precomputeAndStart(): void {
-    this.forceSimulation.precomputeAndStart(
-      () => this.initialZoomToFit && this.zoomByType(ZoomType.FIT)
-    )
+    this.forceSimulation.precomputeAndStart(() => this.initialZoomToFit && this.zoomByType(ZoomType.FIT));
   }
 
-  public zoomByType(zoomType: ZoomType): void {
+  public zoomByType(zoomType: ZoomType): void {}
 
-  }
-
-  public update(options: { updateNodes: boolean, updateRelationships: boolean, restartSimulation: boolean }): void {
+  public update(options: { updateNodes: boolean; updateRelationships: boolean; restartSimulation: boolean }): void {
     if (options.updateNodes) {
       this.updateNodes();
     }
@@ -187,19 +181,17 @@ export class Visualization {
     this.trigger("updated");
   }
 
-
-
   /**
    * Reconfigure and resizing the canvase holding the graph visualization.
-   * 
-   * The reconfiguration overwrites 
-   * 
+   *
+   * The reconfiguration overwrites
+   *
    * 1. whether or not the resizing becomes a full-screen
    * 2. whether or not a zoom-operation requires a modifier key being pressed simultaneously
-   * 
+   *
    * The resizing repositions the display rectangle area such that it is place at the center (0, 0) of the
    * coordinate system
-   * 
+   *
    * @param isFullScreen a flag indicating whether or not the resizing becomes a full-screen
    * @param wheelZoomRequiresModifierKey whether or not the scroll-zooming requires an accompnying modifier key (such as
    * Control/Command key) being pressed
@@ -209,35 +201,27 @@ export class Visualization {
     this.isFullScreen = isFullScreen;
     this.wheelZoomRequiresModifierKey = wheelZoomRequiresModifierKey;
 
-    this.rect
-      .attr("x", () => -Math.floor(size.width / 2))
-      .attr("y", () => Math.floor(size.height / 2));
+    this.rect.attr("x", () => -Math.floor(size.width / 2)).attr("y", () => Math.floor(size.height / 2));
 
-    this.root
-      .attr(
-        "viewBox",
-        [
-          -Math.floor(size.width / 2),
-          -Math.floor(size.height / 2),
-          size.width,
-          size.height
-        ].join(" ")
-      )
+    this.root.attr(
+      "viewBox",
+      [-Math.floor(size.width / 2), -Math.floor(size.height / 2), size.width, size.height].join(" ")
+    );
   }
 
   /**
    * An event dispatcher that, given a specified event name, triggers a list of callbacks attached to the event.
-   * 
+   *
    * The {@link Visualization} maintians a mapping from the event name to the list of callbacks. This mapping can be
    * updated using {@link Visualization.on}
-   * 
+   *
    * @param eventName a event name such as {@link Visualization.CANVAS_CLICKED_EVENT_NAME}
    * @param args the runtime-arguments passed to the executing callbacks. NOTE that these arguments will be applied to
    * all matching callbacks
    */
   public trigger(eventName: string, ...args: any[]): void {
     const callbacksForEvent = this.callbacks[eventName] ?? [];
-    callbacksForEvent.forEach(callback => callback.apply(null, args));
+    callbacksForEvent.forEach((callback) => callback.apply(null, args));
   }
 
   /**
@@ -266,20 +250,12 @@ export class Visualization {
   }
 
   private updateNodes() {
-    this.geometry.onGraphChange(this.graph, { updateNodes: true, updateRelationships: false })
-
-    
+    this.geometry.onGraphChange(this.graph, { updateNodes: true, updateRelationships: false });
   }
 
-  private updateRelationships() {
+  private updateRelationships() {}
 
-  }
+  private adjustZoomMinScaleExtentToFitGraph(padding_factor: number = 0.75): void {}
 
-  private adjustZoomMinScaleExtentToFitGraph(padding_factor: number = 0.75): void {
-
-  }
-
-  private setInitialZoom(): void {
-
-  }
+  private setInitialZoom(): void {}
 }

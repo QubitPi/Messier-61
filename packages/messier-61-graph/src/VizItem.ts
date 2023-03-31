@@ -17,47 +17,41 @@ import { NodeModel } from "./models/Node";
 import { RelationshipModel } from "./models/Relationship";
 
 export const NODE = "node";
-export const RELATIONSHIP = "relationship"
+export const RELATIONSHIP = "relationship";
 export const CANVAS = "canvas";
 export const CONTEXT_MENU_ITEM = "context-menu-item";
 export const STATUS_ITEM = "status-item";
 
-export type VizItem = 
-  | NodeItem
-  | RelationshipItem
-  | CanvasItem
-  | ContextMenuItem
-  | StatusItem
+export type VizItem = NodeItem | RelationshipItem | CanvasItem | ContextMenuItem | StatusItem;
 
 export interface NodeItem {
-  type: typeof NODE,
-  item: Pick<NodeModel, "id" | "labels" | "propertyList">
+  type: typeof NODE;
+  item: Pick<NodeModel, "id" | "labels" | "propertyList">;
 }
 
 export interface RelationshipItem {
-  type: typeof RELATIONSHIP,
-  item: Pick<RelationshipModel, "id" | "type" | "propertyList">
+  type: typeof RELATIONSHIP;
+  item: Pick<RelationshipModel, "id" | "type" | "propertyList">;
 }
 
 export interface CanvasItem {
-  type: typeof CANVAS,
+  type: typeof CANVAS;
   item: {
     nodeCount: number;
     relationshipCount: number;
-  }
+  };
 }
 
-
 export interface ContextMenuItem {
-  type: typeof CONTEXT_MENU_ITEM,
+  type: typeof CONTEXT_MENU_ITEM;
   item: {
-    label: string
-    content: string
-    selection: string
-  }
+    label: string;
+    content: string;
+    selection: string;
+  };
 }
 
 export interface StatusItem {
-  type: typeof STATUS_ITEM,
-  item: string
+  type: typeof STATUS_ITEM;
+  item: string;
 }

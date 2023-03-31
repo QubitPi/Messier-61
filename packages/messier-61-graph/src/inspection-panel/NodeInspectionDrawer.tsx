@@ -21,17 +21,13 @@ const CLOSED = "CLOSED";
 const OPEN = "OPEN";
 const OPENING = "OPENING";
 
-type DrawerTransitionState =
-  | typeof CLOSING
-  | typeof CLOSED
-  | typeof OPEN
-  | typeof OPENING
+type DrawerTransitionState = typeof CLOSING | typeof CLOSED | typeof OPEN | typeof OPENING;
 
 export interface NodeInspectorDrawerProps {
   isOpen: boolean;
   width: number;
   children: JSX.Element;
-};
+}
 
 export function NodeInspectorDrawer(props: NodeInspectorDrawerProps): JSX.Element {
   const [transitionState, setTransitionState] = useState<DrawerTransitionState>(props.isOpen ? OPEN : CLOSED);
@@ -39,14 +35,14 @@ export function NodeInspectorDrawer(props: NodeInspectorDrawerProps): JSX.Elemen
   useEffect(() => {
     if (props.isOpen) {
       if (transitionState === CLOSED || transitionState === CLOSING) {
-        setTransitionState(OPENING)
+        setTransitionState(OPENING);
       }
     } else {
       if (transitionState === OPEN || transitionState === OPENING) {
-        setTransitionState(CLOSING)
+        setTransitionState(CLOSING);
       }
     }
-  }, [props.isOpen, transitionState])
+  }, [props.isOpen, transitionState]);
 
   const drawerIsVisible = transitionState === OPEN || transitionState === OPENING || transitionState === CLOSING;
 
@@ -54,5 +50,5 @@ export function NodeInspectorDrawer(props: NodeInspectorDrawerProps): JSX.Elemen
     <StyledNodeInspectorContainer paneWidth={!props.isOpen ? 0 : props.width} shouldAnimate={transitionState !== OPEN}>
       {drawerIsVisible && props.children}
     </StyledNodeInspectorContainer>
-  )
+  );
 }

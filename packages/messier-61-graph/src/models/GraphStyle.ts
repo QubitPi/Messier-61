@@ -17,23 +17,23 @@ const OBJECT_TYPE = "object";
 
 export const DEFAULT_STYLE = {
   node: {
-    diameter: '50px',
-    color: '#A5ABB6',
-    'border-color': '#9AA1AC',
-    'border-width': '2px',
-    'text-color-internal': '#FFFFFF',
-    'font-size': '10px'
+    diameter: "50px",
+    color: "#A5ABB6",
+    "border-color": "#9AA1AC",
+    "border-width": "2px",
+    "text-color-internal": "#FFFFFF",
+    "font-size": "10px",
   },
   relationship: {
-    color: '#A5ABB6',
-    'shaft-width': '1px',
-    'font-size': '8px',
-    padding: '3px',
-    'text-color-external': '#000000',
-    'text-color-internal': '#FFFFFF',
-    caption: '<type>'
-  }
-}
+    color: "#A5ABB6",
+    "shaft-width": "1px",
+    "font-size": "8px",
+    padding: "3px",
+    "text-color-external": "#000000",
+    "text-color-internal": "#FFFFFF",
+    caption: "<type>",
+  },
+};
 
 export class Selector {
   private tag = "";
@@ -49,8 +49,8 @@ export class Selector {
   }
 
   private selectorArrayToString(selectors: any): string {
-    const escaped = selectors.map((r: any) => r.replace(/\./g, '\\.'))
-    return escaped.join('.')
+    const escaped = selectors.map((r: any) => r.replace(/\./g, "\\."));
+    return escaped.join(".");
   }
 }
 
@@ -80,7 +80,7 @@ export class GraphStyleModel {
 
     for (const key in styleData) {
       const props = styleData[key];
-      this.rules.push(new StyleRule(this.parseSelector(key), props))
+      this.rules.push(new StyleRule(this.parseSelector(key), props));
     }
   }
 
@@ -89,7 +89,7 @@ export class GraphStyleModel {
 
     this.rules.forEach((rule: StyleRule) => {
       sheet[rule.selector.toString()] = rule.props;
-    })
+    });
 
     return sheet;
   }
@@ -109,26 +109,26 @@ export class GraphStyleModel {
   /**
    * For example
    *
-   * @param selector 
-   * @returns 
+   * @param selector
+   * @returns
    */
   private selectorStringToArray(selector: string): any {
     // Negative lookbehind simulation since js support is very limited.
     // We want to match all . that are not preceded by \\
     // Instead we reverse and look
     // for . that are not followed by \\ (negative lookahead)
-    const reverseSelector = selector.split('').reverse().join('')
-    const re = /(.+?)(?!\.\\)(?:\.|$)/g
-    const out = []
-    let m
+    const reverseSelector = selector.split("").reverse().join("");
+    const re = /(.+?)(?!\.\\)(?:\.|$)/g;
+    const out = [];
+    let m;
     while ((m = re.exec(reverseSelector)) !== null) {
-      const res = m[1].split('').reverse().join('')
-      out.push(res)
+      const res = m[1].split("").reverse().join("");
+      out.push(res);
     }
-  
+
     return out
-      .filter(r => r)
+      .filter((r) => r)
       .reverse()
-      .map(r => r.replace(/\\./g, '.'))
+      .map((r) => r.replace(/\\./g, "."));
   }
 }

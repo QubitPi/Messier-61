@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import styled from 'styled-components'
+import styled from "styled-components";
 
 export const StyledNodeInspectorTopMenuChevron = styled.button<{
-  expanded: boolean
+  expanded: boolean;
 }>`
-  background-color: ${props => props.theme.frameSidebarBackground};
+  background-color: ${(props) => props.theme.frameSidebarBackground};
   cursor: pointer;
   position: absolute;
   right: 8px;
@@ -27,20 +27,20 @@ export const StyledNodeInspectorTopMenuChevron = styled.button<{
   width: 32px;
   height: 32px;
   padding: 6px;
-  color: ${props => props.theme.frameNodePropertiesPanelIconTextColor};
+  color: ${(props) => props.theme.frameNodePropertiesPanelIconTextColor};
   text-align: center;
-  ${props =>
+  ${(props) =>
     !props.expanded &&
     `background: ${props.theme.editorBackground};
        box-shadow: ${props.theme.standardShadow};
     `}
-`
+`;
 
 export const PaneContainer = styled.div<{
-  paneWidth: number
+  paneWidth: number;
 }>`
-  width: ${props => props.paneWidth}px;
+  width: ${(props) => props.paneWidth}px;
   height: 100%;
   display: flex;
   flex-direction: column;
-`
+`;

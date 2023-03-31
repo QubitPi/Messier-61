@@ -22,7 +22,6 @@ const CLIPBOARD_MESSAGE_ON_FAILURE = "Copying text failed";
 const CLIPBOARD_MESSAGE_ON_SUCCESS = "✔️ Copied to clipboard";
 const CLIPBOARD_FLOATING_INDICATOR_TEXT = "Copy key and value";
 
-
 export interface PropertiesTableProps {
   visibleProperties: VizItemProperty[];
 }
@@ -39,19 +38,15 @@ export function PropertiesTable(props: PropertiesTableProps): JSX.Element {
                   <ClickableUrls text={key} />
                 </KeyCell>
                 <ValueCell>
-                  <ExpandableValue
-                    value={value}
-                    width={nodeInspectorWidth}
-                    type={type}
-                  />
+                  <ExpandableValue value={value} width={nodeInspectorWidth} type={type} />
                 </ValueCell>
                 <CopyCell>
                   <ClipboardCopier
                     textToCopy={`${key}: ${value}`}
-                    indicatorText={ CLIPBOARD_FLOATING_INDICATOR_TEXT }
-                    messageOnSuccess={ CLIPBOARD_MESSAGE_ON_SUCCESS }
-                    messageOnFailure={ CLIPBOARD_MESSAGE_ON_FAILURE }
-                    copyIconSideLength={ COPY_ICON_SIDE_LENGTH_IN_PX }
+                    indicatorText={CLIPBOARD_FLOATING_INDICATOR_TEXT}
+                    messageOnSuccess={CLIPBOARD_MESSAGE_ON_SUCCESS}
+                    messageOnFailure={CLIPBOARD_MESSAGE_ON_FAILURE}
+                    copyIconSideLength={COPY_ICON_SIDE_LENGTH_IN_PX}
                   />
                 </CopyCell>
               </tr>
@@ -59,12 +54,7 @@ export function PropertiesTable(props: PropertiesTableProps): JSX.Element {
           </tbody>
         </AlternatingTable>
       </StyledInlineList>
-      <ShowMoreOrAll
-        total={totalNumItems}
-        shown={visibleProperties.length}
-        moreStep={moreStep}
-        onMore={onMoreClick}
-      />
+      <ShowMoreOrAll total={totalNumItems} shown={visibleProperties.length} moreStep={moreStep} onMore={onMoreClick} />
     </>
-  )
+  );
 }

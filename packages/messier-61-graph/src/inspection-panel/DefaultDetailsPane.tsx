@@ -34,8 +34,8 @@ const CLIPBOARD_FLOATING_INDICATOR_TEXT = "Copy all properties to clipboard";
 /**
  * A pane is a (usually) independently scrollable subsection of a window. window. A panel is an object that is used to group controls and other objects
  *
- * @param props 
- * @returns 
+ * @param props
+ * @returns
  */
 export function DefaultDetailsPane(props: DefaultDetailsPaneProps): JSX.Element {
   const [maxPropertiesCount, setMaxPropertiesCount] = useState<number>(DEFAULT_PANE_PAGE_SIZE);
@@ -43,10 +43,11 @@ export function DefaultDetailsPane(props: DefaultDetailsPaneProps): JSX.Element 
   const idProperty = {
     key: "<id>",
     value: `${props.vizItem.item.id}`,
-    type: "String"
-  }
-  const allItemProperties = [idProperty, ...props.vizItem.item.propertyList]
-    .sort((first, second) => (first.key < second.key ? -1 : 1));
+    type: "String",
+  };
+  const allItemProperties = [idProperty, ...props.vizItem.item.propertyList].sort((first, second) =>
+    first.key < second.key ? -1 : 1
+  );
   const visibleItemProperties = allItemProperties.slice(0, maxPropertiesCount);
 
   function handleMorePropertiesClick(extraAmount: number): void {
@@ -59,18 +60,18 @@ export function DefaultDetailsPane(props: DefaultDetailsPaneProps): JSX.Element 
         <PaneTitle>
           <span>{`${upperFirst(props.vizItem.type)} properties`}</span>
           <ClipboardCopier
-            textToCopy={ allItemProperties.map(prop => `${prop.key}: ${prop.value}`).join('\n') }
-            indicatorText={ CLIPBOARD_FLOATING_INDICATOR_TEXT }
-            messageOnSuccess = { CLIPBOARD_MESSAGE_ON_SUCCESS }
-            messageOnFailure = { CLIPBOARD_MESSAGE_ON_FAILURE }
-            copyIconSideLength={ COPY_ICON_SIDE_LENGTH_IN_PX }
+            textToCopy={allItemProperties.map((prop) => `${prop.key}: ${prop.value}`).join("\n")}
+            indicatorText={CLIPBOARD_FLOATING_INDICATOR_TEXT}
+            messageOnSuccess={CLIPBOARD_MESSAGE_ON_SUCCESS}
+            messageOnFailure={CLIPBOARD_MESSAGE_ON_FAILURE}
+            copyIconSideLength={COPY_ICON_SIDE_LENGTH_IN_PX}
           />
         </PaneTitle>
         {props.vizItem.type === RELATIONSHIP && (
           <RelType
             selectedRelType={{
-              propertyKeys: vizItem.item.propertyList.map(p => p.key),
-              relType: vizItem.item.type
+              propertyKeys: vizItem.item.propertyList.map((p) => p.key),
+              relType: vizItem.item.type,
             }}
             graphStyle={graphStyle}
           />
@@ -83,10 +84,10 @@ export function DefaultDetailsPane(props: DefaultDetailsPaneProps): JSX.Element 
                 graphStyle={graphStyle}
                 selectedLabel={{
                   label,
-                  propertyKeys: vizItem.item.propertyList.map(p => p.key)
+                  propertyKeys: vizItem.item.propertyList.map((p) => p.key),
                 }}
               />
-            )
+            );
           })}
       </PaneHeader>
       <PaneBody>
@@ -99,7 +100,7 @@ export function DefaultDetailsPane(props: DefaultDetailsPaneProps): JSX.Element 
         />
       </PaneBody>
     </PaneWrapper>
-  )
+  );
 }
 
 /**

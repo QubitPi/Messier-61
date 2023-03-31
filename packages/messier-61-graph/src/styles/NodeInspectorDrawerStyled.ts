@@ -13,23 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import styled from 'styled-components'
+import styled from "styled-components";
 
 export const StyledNodeInspectorContainer = styled.div<{
-  paneWidth: number
-  shouldAnimate: boolean
+  paneWidth: number;
+  shouldAnimate: boolean;
 }>`
   position: absolute;
   right: 8px;
   top: 8px;
   bottom: 8px;
   z-index: 1;
-  width: ${props => props.paneWidth}px;
-  ${props => props.shouldAnimate && 'transition: 0.2s ease-out;'}
+  width: ${(props) => props.paneWidth}px;
+  ${(props) => props.shouldAnimate && "transition: 0.2s ease-out;"}
   max-width: 95%;
-  background: ${props => props.theme.editorBackground};
-  color: ${props => props.theme.primaryText};
-  font-family: ${props => props.theme.drawerHeaderFontFamily};
-  box-shadow: ${props => props.theme.standardShadow};
+  background: ${(props) => props.theme.editorBackground};
+  color: ${(props) => props.theme.primaryText};
+  font-family: ${(props) => props.theme.drawerHeaderFontFamily};
+  box-shadow: ${(props) => props.theme.standardShadow};
   overflow: hidden;
-`
+`;

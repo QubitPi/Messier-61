@@ -17,7 +17,7 @@ export type GraphStatsLabel = Record<
   string,
   {
     count: number;
-    properties: Record<string, string>
+    properties: Record<string, string>;
   }
 >;
 
@@ -25,11 +25,11 @@ export type GraphStatsRelationshipTypes = Record<
   string,
   {
     count: number;
-    properties: Record<string, string>
+    properties: Record<string, string>;
   }
 >;
 
 export interface GraphStats {
   labels: GraphStatsLabel;
-  relationshipTypes: GraphStatsRelationshipTypes
-};
+  relationshipTypes: GraphStatsRelationshipTypes;
+}

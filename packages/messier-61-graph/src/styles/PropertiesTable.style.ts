@@ -13,39 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import styled from 'styled-components'
+import styled from "styled-components";
 
 export const AlternatingTable = styled.table`
   tr:nth-child(even) {
-    background: ${props => props.theme.alteringTableRowBackground};
+    background: ${(props) => props.theme.alteringTableRowBackground};
   }
   tr:nth-child(odd) {
-    background: ${props => props.theme.editorBackground};
+    background: ${(props) => props.theme.editorBackground};
   }
   font-size: 13px;
   width: 100%;
-`
+`;
 
 export const CopyCell = styled.td`
   padding: 2px 5px;
   display: flex;
   justify-content: flex-end;
-`
+`;
 
 export const KeyCell = styled.td`
   font-weight: 700;
   vertical-align: top;
   padding: 2px;
   width: 30%;
-`
+`;
 
 export const StyledInlineList = styled.ul`
   list-style: none;
   word-break: break-word;
-`
+`;
 
 export const ValueCell = styled.td`
   padding: 2px;
   white-space: pre-wrap;
   vertical-align: top;
-`
+`;

@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import styled from 'styled-components'
+import styled from "styled-components";
 
 export const CopyIconContainer = styled.span`
   cursor: pointer;
   position: relative;
-  color: ${props => props.theme.frameControlButtonTextColor};
+  color: ${(props) => props.theme.frameControlButtonTextColor};
   font-size: 12px;
-`
+`;
 
 export const PaneBody = styled.div`
   height: 100%;
@@ -30,7 +30,7 @@ export const PaneBody = styled.div`
   display: flex;
   flex-direction: column;
   gap: 14px;
-`
+`;
 
 export const PaneHeader = styled.div`
   font-size: 16px;
@@ -38,21 +38,21 @@ export const PaneHeader = styled.div`
   flex: 0 0 auto;
   overflow: auto;
   max-height: 50%;
-`
+`;
 
 export const PaneTitle = styled.div`
   margin-bottom: 10px;
   display: flex;
   gap: 5px;
   align-items: center;
-`
+`;
 
 export const PaneWrapper = styled.div`
   padding: 0 14px;
   height: 100%;
   display: flex;
   flex-direction: column;
-`
+`;
 
 export const PopupTextContainer = styled.span`
   position: absolute;
@@ -60,9 +60,9 @@ export const PopupTextContainer = styled.span`
   right: 20px;
   bottom: 0;
   border-radius: 2px;
-  background-color: ${props => props.theme.frameSidebarBackground};
-  box-shadow: ${props => props.theme.standardShadow};
-  color: ${props => props.theme.primaryText}
-  font-family: ${props => props.theme.drawerHeaderFontFamily};
+  background-color: ${(props) => props.theme.frameSidebarBackground};
+  box-shadow: ${(props) => props.theme.standardShadow};
+  color: ${(props) => props.theme.primaryText}
+  font-family: ${(props) => props.theme.drawerHeaderFontFamily};
   padding: 0 5px;
-`
+`;

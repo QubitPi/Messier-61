@@ -28,10 +28,10 @@ export class GraphModel {
   expandedNodeIdMap: Record<string, string[]>;
 
   /**
-   * 
+   *
    * @param nodes The provided list of {@link NodeModel nodes}
    * @param relationships The provided list of {@link RelationshipModel relationships}
-   * @returns 
+   * @returns
    */
   static withNodesAndRelationships(nodes: NodeModel[], relationships: RelationshipModel[]): GraphModel {
     const graph = new GraphModel();

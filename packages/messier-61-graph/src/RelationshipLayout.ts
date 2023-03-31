@@ -17,7 +17,6 @@ import { GraphModel } from "./models/Graph";
 import { GraphStyleModel } from "./models/GraphStyle";
 
 export class RelationshipLayout {
-
   private style: GraphStyleModel;
   private canvas: HTMLCanvasElement;
 
