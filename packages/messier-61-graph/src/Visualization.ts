@@ -59,15 +59,14 @@ export class Visualization {
   constructor(
     element: SVGElement,
     graph: GraphModel,
+    
     style: GraphStyleModel,
     measureSize: () => { width: number; height: number },
 
     isFullScreen: boolean,
-
+    initialZoomToFit: boolean,
     wheelZoomRequiresModifierKey: boolean,
     onDisplayZoomWheelInfoMessage: () => void,
-
-    initialZoomToFit: boolean,
     onZoomEvent: (zoomLimitReached: ZoomLimitsReached) => void
   ) {
     this.root = d3Select(element);
@@ -95,6 +94,8 @@ export class Visualization {
     this.style = style;
     this.geometry = new GraphGeometryModel(style);
     this.measureSize = measureSize;
+
+    this.initialZoomToFit = initialZoomToFit
 
     this.graph = graph;
     this.forceSimulation = new ForceSimulation(this.render.bind(this));

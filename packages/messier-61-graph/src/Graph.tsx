@@ -15,7 +15,7 @@
  */
 import { MagnifyingGlassMinusIcon, MagnifyingGlassPlusIcon } from "@heroicons/react/24/solid";
 import { useEffect, useRef, useState } from "react";
-import { GraphEventHandlerModel } from "./GraphEventHandlerModel";
+import { GetNodeNeigtborsFn, GraphEventHandlerModel, GraphInteraction } from "./GraphEventHandlerModel";
 import { GraphModel } from "./models/Graph";
 import { GraphStyleModel } from "./models/GraphStyle";
 import { NodeModel } from "./models/Node";
@@ -24,6 +24,8 @@ import { StyledSvgWrapper, StyledZoomButton, StyledZoomHolder } from "./styles/G
 import { Visualization, ZoomType } from "./Visualization";
 import { WheelZoomInfoOverlay } from "./WheelZoomInfoOverlay";
 import { ZoomLimitsReached } from "./ZoomLimitsReached";
+import { GraphStats, getGraphStats } from "./GraphStats";
+import { VizItem } from "./VizItem";
 
 const ZOOM_ICONS_LARGE_SCALE_FACTOR = 1.2;
 const ZOOM_ICONS_DEFAULT_SIZE_IN_PX = 15;
@@ -38,6 +40,20 @@ export interface GraphProps {
   nodes: NodeModel[];
   relationships: RelationshipModel[];
 
+  // Visualization arguments
+  isFullScreen: boolean;
+  initialZoomToFit: boolean;
+  graphStyle: GraphStyleModel;
+  wheelZoomInfoMessageEnabled: boolean;
+  wheelZoomRequiresModifierKey: boolean;
+
+  // GraphEventHandlerModel arguments
+  getNodeNeighbours: GetNodeNeigtborsFn;
+  onGraphModelChange: (stats: GraphStats) => void;
+  onItemMouseOver: (item: VizItem) => void;
+  onItemSelect: (item: VizItem) => void;
+  onGraphInteraction: (eventType: GraphInteraction, properties?: Record<string, unknown>) => void;
+
   /**
    * The amount of shift of the graphing area away from the right side of the browser.
    *
@@ -51,27 +67,15 @@ export interface GraphProps {
    * <img src="media://offset-illustraion-2.png" width="100%" />
    */
   rightOffset: number;
-
-  wheelZoomRequiresModifierKey: boolean;
-  wheelZoomInfoMessageEnabled?: boolean;
-
-  styleVersion: number;
-  isFullScreen: boolean;
-  graphStyle: GraphStyleModel;
   setGraph: (graph: GraphModel) => void;
   autoCompleteRelationships: boolean;
   autoCompleteCallback: (callback: (relationships: RelationshipModel[], initialRun: boolean) => void) => void;
-  getNodeNeighborsCallback: getNeighborsCallback;
   assignVisElementFn: (svgElement: any, graphEelemtn: any) => void;
-
-  onItemMouseOver: (item: any) => void;
-  onItemSelect: (item: any) => void;
-  onGraphModelChange: (stats: any) => void;
-
   disableWheelZoomInfoMessage: () => void;
 }
 
 /**
+ * Graph Component depends on Visualization and GraphEventHandler child components.
  *
  * @param props
  * @returns
@@ -100,14 +104,41 @@ export function Graph(props: GraphProps): JSX.Element {
       return;
     }
 
+    const graph = GraphModel.withNodesAndRelationships(props.nodes, props.relationships);
     const measureSize = () => ({
       width: svgElement.current?.parentElement?.clientWidth ?? 200,
       height: svgElement.current?.parentElement?.clientHeight ?? 200,
     });
+    function handleDisplayZoomWheelInfoMessage(): void {
+      if (!displayingWheelZoomInfoMessage && props.wheelZoomRequiresModifierKey && props.wheelZoomInfoMessageEnabled) {
+        setDisplayingWheelZoomInfoMessage(true);
+      }
+    }
+    function handleZoomEvent(zoomLimitsReached: ZoomLimitsReached): void {
+      setZoomInLimitReached(zoomLimitsReached.zoomInLimitReached);
+      setZoomOutLimitReached(zoomLimitsReached.zoomOutLimitReached);
+    }
+    visualization = new Visualization(
+      svgElement.current,
+      graph,
+      props.graphStyle,
+      measureSize,
+      props.isFullScreen,
+      props.initialZoomToFit,
+      props.wheelZoomRequiresModifierKey,
+      handleDisplayZoomWheelInfoMessage,
+      handleZoomEvent
+    );
 
-    const graph = GraphModel.withNodesAndRelationships(props.nodes, props.relationships);
-    visualization = new Visualization();
-    const graphEventHandler = new GraphEventHandlerModel();
+    const graphEventHandler = new GraphEventHandlerModel(
+      graph,
+      visualization,
+      props.getNodeNeighbours,
+      props.onGraphModelChange,
+      props.onItemMouseOver,
+      props.onItemSelect,
+      props.onGraphInteraction
+    );
     graphEventHandler.bindEventHandlers();
 
     props.onGraphModelChange(getGraphStats(graph));
@@ -120,7 +151,20 @@ export function Graph(props: GraphProps): JSX.Element {
     }
 
     if (props.autoCompleteRelationships) {
-      props.autoCompleteCallback();
+      props.autoCompleteCallback((relationships: RelationshipModel[], initialRun: boolean) => {
+        if (initialRun) {
+          visualization?.init();
+          graph.addRelationships(relationships);
+          props.onGraphModelChange(getGraphStats(graph));
+          visualization?.update({ updateNodes: false, updateRelationships: true, restartSimulation: false });
+          visualization?.precomputeAndStart();
+          graphEventHandler.onItemMouseOut();
+        } else {
+          graph.addRelationships(relationships);
+          props.onGraphModelChange(getGraphStats(graph));
+          visualization?.update({ updateNodes: false, updateRelationships: true, restartSimulation: false });
+        }
+      });
     } else {
       visualization?.init();
       visualization?.precomputeAndStart();
@@ -139,17 +183,6 @@ export function Graph(props: GraphProps): JSX.Element {
     svgElement.current,
     wrapperElement.current,
   ]);
-
-  function handleZoomEvent(zoomLimitsReached: ZoomLimitsReached): void {
-    setZoomInLimitReached(zoomLimitsReached.zoomInLimitReached);
-    setZoomOutLimitReached(zoomLimitsReached.zoomOutLimitReached);
-  }
-
-  function handleDisplayZoomWheelInfoMessage(): void {
-    if (!displayingWheelZoomInfoMessage && props.wheelZoomRequiresModifierKey && props.wheelZoomInfoMessageEnabled) {
-      setDisplayingWheelZoomInfoMessage(true);
-    }
-  }
 
   function zoomToFitClicked(): void {}
 
@@ -183,8 +216,6 @@ export function Graph(props: GraphProps): JSX.Element {
     </StyledSvgWrapper>
   );
 }
-
-function getGraphStats(graph: GraphModel): GraphStats {}
 
 const ZoomInIcon = ({ large = false }: { large?: boolean }): JSX.Element => {
   const scale = large ? ZOOM_ICONS_LARGE_SCALE_FACTOR : 1;

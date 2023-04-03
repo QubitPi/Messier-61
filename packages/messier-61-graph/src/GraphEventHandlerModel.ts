@@ -256,6 +256,6 @@ export class GraphEventHandlerModel {
       .on(NODE_CLICKED, this.nodeClicked.bind(this))
       .on(NODE_DOUBLE_CLICKED, this.nodeDoubleClicked.bind(this))
       .on(NODE_UNLOCK, this.nodeUnlock.bind(this));
-    this.onItemMouseOut(); // ???
+    this.onItemMouseOut();
   }
 }
