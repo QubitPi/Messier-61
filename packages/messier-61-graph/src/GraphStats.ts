@@ -1,3 +1,5 @@
+import { GraphModel } from "./models/Graph";
+
 /*
  * Copyright Jiaqi Liu
  *
@@ -13,6 +15,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+const ALL_SORTS = "*";
+
 export type GraphStatsLabel = Record<
   string,
   {
@@ -32,4 +36,35 @@ export type GraphStatsRelationshipTypes = Record<
 export interface GraphStats {
   labels: GraphStatsLabel;
   relationshipTypes: GraphStatsRelationshipTypes;
+}
+
+export function getGraphStats(graph: GraphModel): GraphStats {
+  const labelStats: GraphStatsLabel = graph.nodes.length === 0 ? {} : { ALL_SORTS: { count: 1, properties: {} } };
+  const relationshipTypeStats: GraphStatsRelationshipTypes =
+    graph.relationships.length === 0 ? {} : { ALL_SORTS: { count: 1, properties: {} } };
+
+  graph.nodes.forEach((node) => {
+    node.labels.forEach((label) => {
+      if (labelStats[label] == null) {
+        labelStats[label] = { count: 1, properties: node.propertyMap };
+      } else {
+        labelStats[label].count = labelStats[label].count + 1;
+        labelStats[label].properties = { ...labelStats[label].properties, ...node.propertyMap };
+      }
+    });
+  });
+
+  graph.relationships.forEach((relationship) => {
+    if (relationshipTypeStats[relationship.type] == null) {
+      relationshipTypeStats[relationship.type] = { count: 1, properties: relationship.propertyMap };
+    } else {
+      relationshipTypeStats[relationship.type].count = relationshipTypeStats[relationship.type].count + 1;
+      relationshipTypeStats[relationship.type].properties = {
+        ...relationshipTypeStats[relationship.type].properties,
+        ...relationship.propertyMap,
+      };
+    }
+  });
+
+  return { labels: labelStats, relationshipTypes: relationshipTypeStats };
 }
