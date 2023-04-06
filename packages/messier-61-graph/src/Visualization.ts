@@ -24,6 +24,8 @@ import { ZoomLimitsReached } from "./ZoomLimitsReached";
 import { NodeModel } from "./models/Node";
 import { NODE_RENDERERS } from "./Renderer";
 import { RelationshipModel } from "./models/Relationship";
+import { nodeEventHandlers } from "./event-handler/NodeEventHandlers";
+import { relationshipEventHandlers } from "./event-handler/RelationshipEventHandlers";
 
 const ZOOM_FIT_PADDING_PERCENT = 0.05
 

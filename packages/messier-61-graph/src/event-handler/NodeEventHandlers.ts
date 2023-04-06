@@ -37,7 +37,7 @@ const TOLERANCE = 25;
 
 export function nodeEventHandlers(
   selection: Selection<SVGGElement, NodeModel, BaseType, unknown>,
-  trigger: (event: String, node: NodeModel) => void,
+  trigger: (event: string, node: NodeModel) => void,
   simulation: Simulation<NodeModel, RelationshipModel>
 ) {
   let initialDragPosition: [number, number];
