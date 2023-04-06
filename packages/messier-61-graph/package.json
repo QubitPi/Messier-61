@@ -26,6 +26,7 @@
   "dependencies": {
     "@heroicons/react": "^2.0.16",
     "@juggle/resize-observer": "^3.4.0",
+    "d3-drag": "^3.0.0",
     "d3-ease": "^3.0.1",
     "d3-force": "^3.0.0",
     "d3-selection": "^3.0.0",
@@ -37,6 +38,7 @@
     "styled-components": "^5.3.9"
   },
   "devDependencies": {
+    "@types/d3-drag": "^3.0.2",
     "@types/d3-ease": "^3.0.0",
     "@types/d3-force": "^3.0.4",
     "@types/d3-selection": "^3.0.2",

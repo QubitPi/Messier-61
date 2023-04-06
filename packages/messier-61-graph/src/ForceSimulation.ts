@@ -23,7 +23,11 @@ import type { RelationshipModel } from "./models/Relationship";
 // decreases over time. Can be seen as the probability that a node will move.
 const DEFAULT_ALPHA = 1;
 
-// Temperature at which the simulation is stopped.
+/**
+ * Temperature at which the simulation is stopped.
+ * 
+ * This value must be smaller than {@link NodeEventHandlers!DRAGGING_ALPHA_TARGET}
+ */
 const DEFAULT_ALPHA_MIN = 0.05;
 
 const FORCE_CENTER_X = 0.03;
