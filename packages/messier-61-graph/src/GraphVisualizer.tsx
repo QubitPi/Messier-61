@@ -18,7 +18,7 @@ import { GraphStyleModel } from "./models/GraphStyle";
 import { NodeModel } from "./models/Node";
 import { RelationshipModel } from "./models/Relationship";
 import { VizItem } from "./VizItem";
-import { GetNodeNeigtborsFn } from "./GraphEventHandlerModel";
+import { GetNodeNeigtborsFn } from "./event-handler/GraphEventHandlerModel";
 import { debounce } from "lodash-es";
 import deepmerge from "deepmerge";
 import { GraphStats } from "./GraphStats";

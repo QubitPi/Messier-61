@@ -13,22 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { getGraphStats, GraphStats } from "./GraphStats";
-import { GraphModel } from "./models/Graph";
-import { NodeModel } from "./models/Node";
-import { RelationshipModel } from "./models/Relationship";
-import { Visualization } from "./Visualization";
-import { RELATIONSHIP } from "./VizItem";
-import { CONTEXT_MENU_ITEM } from "./VizItem";
-import { NODE } from "./VizItem";
-import { CANVAS, VizItem } from "./VizItem";
+import { getGraphStats, GraphStats } from "../GraphStats";
+import { GraphModel } from "../models/Graph";
+import { NodeModel } from "../models/Node";
+import { RelationshipModel } from "../models/Relationship";
+import { Visualization } from "../Visualization";
+import { RELATIONSHIP } from "../VizItem";
+import { CONTEXT_MENU_ITEM } from "../VizItem";
+import { NODE } from "../VizItem";
+import { CANVAS, VizItem } from "../VizItem";
 
 export const NODE_MOUSE_OVER = "nodeMouseOver";
 export const NODE_MOUSE_OUT = "nodeMouseOut";
 export const MENU_MOUSE_OVER = "menuMouseOver";
 export const MENU_MOUSE_OUT = "menuMouseOut";
 export const RELATIONSHIP_MOUSE_OVER = "relationshipMouseOver";
-export const RELATIONSHIP_MOUST_OUT = "relationshipMouseOut";
+export const RELATIONSHIP_MOUSE_OUT = "relationshipMouseOut";
 export const RELATIONSHIP_CLICKED = "relationshipClicked";
 export const CANVAS_CLICKED = "canvasClicked";
 export const NODE_CLOSE = "nodeClose";
@@ -249,7 +249,7 @@ export class GraphEventHandlerModel {
       .on(MENU_MOUSE_OVER, this.onMenuMouseOver.bind(this))
       .on(MENU_MOUSE_OUT, this.onItemMouseOut.bind(this))
       .on(RELATIONSHIP_MOUSE_OVER, this.onRelationshipMouseOver.bind(this))
-      .on(RELATIONSHIP_MOUST_OUT, this.onItemMouseOut.bind(this))
+      .on(RELATIONSHIP_MOUSE_OUT, this.onItemMouseOut.bind(this))
       .on(RELATIONSHIP_CLICKED, this.onRelationshipClicked.bind(this))
       .on(CANVAS_CLICKED, this.onCanvasClicked.bind(this))
       .on(NODE_CLOSE, this.nodeClose.bind(this))

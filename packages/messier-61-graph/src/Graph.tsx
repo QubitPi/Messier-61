@@ -15,7 +15,7 @@
  */
 import { MagnifyingGlassMinusIcon, MagnifyingGlassPlusIcon } from "@heroicons/react/24/solid";
 import { useEffect, useRef, useState } from "react";
-import { GetNodeNeigtborsFn, GraphEventHandlerModel, GraphInteraction } from "./GraphEventHandlerModel";
+import { GetNodeNeigtborsFn, GraphEventHandlerModel, GraphInteraction } from "./event-handler/GraphEventHandlerModel";
 import { GraphModel } from "./models/Graph";
 import { GraphStyleModel } from "./models/GraphStyle";
 import { NodeModel } from "./models/Node";
