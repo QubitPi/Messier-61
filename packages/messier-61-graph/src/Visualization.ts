@@ -170,6 +170,20 @@ export class Visualization {
     this.forceSimulation.precomputeAndStart(() => this.initialZoomToFit && this.zoomByType(ZoomType.FIT));
   }
 
+  public update(options: { updateNodes: boolean; updateRelationships: boolean; restartSimulation: boolean }): void {
+    if (options.updateNodes) {
+      this.updateNodes();
+    }
+
+    if (options.updateRelationships) {
+      this.updateRelationships();
+    }
+
+    if (options.restartSimulation) {
+      this.forceSimulation.restart();
+    }
+  }
+
   public zoomByType(zoomType: ZoomType): void {
     this.isPanning = true;
     this.isZoomClick = true;
@@ -182,6 +196,161 @@ export class Visualization {
       this.zoomToFitViewport();
       this.adjustZoomMinScaleExtentToFitGraph(1);
     }
+  }
+
+  /**
+   * Reconfigure and resizing the canvase holding the graph visualization.
+   *
+   * The reconfiguration overwrites
+   *
+   * 1. whether or not the resizing becomes a full-screen
+   * 2. whether or not a zoom-operation requires a modifier key being pressed simultaneously
+   *
+   * The resizing repositions the display rectangle area such that it is place at the center (0, 0) of the
+   * coordinate system
+   *
+   * @param isFullScreen a flag indicating whether or not the resizing becomes a full-screen
+   * @param wheelZoomRequiresModifierKey whether or not the scroll-zooming requires an accompnying modifier key (such as
+   * Control/Command key) being pressed
+   */
+  public resize(isFullScreen: boolean, wheelZoomRequiresModifierKey: boolean): void {
+    const size = this.measureSize();
+    this.isFullScreen = isFullScreen;
+    this.wheelZoomRequiresModifierKey = wheelZoomRequiresModifierKey;
+
+    this.rect.attr("x", () => -Math.floor(size.width / 2)).attr("y", () => Math.floor(size.height / 2));
+
+    this.root.attr(
+      "viewBox",
+      [-Math.floor(size.width / 2), -Math.floor(size.height / 2), size.width, size.height].join(" ")
+    );
+  }
+
+  /**
+   * Associates a function with an user event on this {@link Visualization}.
+   *
+   * @param eventName the provided event name such as {@link Visualization.CANVAS_CLICKED_EVENT_NAME}
+   * @param callback the callback function that is to be attached to the event and that is to be executed when the event
+   * is called
+   *
+   * @returns the {@link Visualization} instance on which this function is called for better API chaining
+   */
+  public on(eventName: string, callback: (...args: any) => void): this {
+    const existingCallback = this.callbacks[eventName];
+
+    if (existingCallback === null || existingCallback === undefined) {
+      this.callbacks[eventName] = [];
+    }
+
+    this.callbacks[eventName]?.push(callback);
+
+    return this;
+  }
+
+  private setInitialZoom(): void {
+    const count = this.graph.nodes.length
+
+    // chosen by *feel* (graph fitting guesstimate)
+    const scale = -0.02364554 + 1.913 / (1 + (count / 12.7211) ** 0.8156444)
+    this.zoomBehavior.scaleBy(this.root, Math.max(0, scale)) 
+  }
+
+  /**
+   * An event dispatcher that, given a specified event name, triggers a list of callbacks attached to the event.
+   *
+   * The {@link Visualization} maintians a mapping from the event name to the list of callbacks. This mapping can be
+   * updated using {@link Visualization.on}
+   *
+   * @param eventName a event name such as {@link Visualization.CANVAS_CLICKED_EVENT_NAME}
+   * @param args the runtime-arguments passed to the executing callbacks. NOTE that these arguments will be applied to
+   * all matching callbacks
+   */
+  public trigger(eventName: string, ...args: any[]): void {
+    const callbacksForEvent = this.callbacks[eventName] ?? [];
+    callbacksForEvent.forEach((callback) => callback.apply(null, args));
+  }
+
+  /**
+   * Updates node rendering in visualization.
+   * 
+   * The updates include:
+   * 
+   * - Update graph geomery configs
+   * - D3 re-joins node objects with DOM elements
+   * - Rebinds {@link NodeEventHandlers}
+   * - Executes all node re-rendering logics
+   * - Executes all donut menu re-rendering logics
+   * - Executes {@link ForceSimulation!updateNodes}
+   * - Executes {@link ForceSimulation!updateRelationships} 
+   */
+  private updateNodes() {
+    this.geometry.onGraphChange(this.graph, { updateNodes: true, updateRelationships: false });
+
+    const nodeGroups = this.gContainer
+      .select("g.layer.nodes")
+      .selectAll<SVGGElement, NodeModel>("g.node")
+      .data(this.graph.nodes, node => node.id)
+      .join("g")
+      .attr("class", "node")
+      .attr("aria-label", node => `graph-node${node.id}`) // https://stackoverflow.com/a/22040485
+      .call(nodeEventHandlers, this.trigger, this.forceSimulation.simulation)
+      .classed("selected", node => node.selected);
+
+    NODE_RENDERERS.forEach(renderer => nodeGroups.call(renderer.onGraphChange, this));
+    NODE_MENU_RENDERERS.forEach(renderer => nodeGroups.call(renderer.onGraphChange, this));
+
+    this.forceSimulation.updateNodes(this.graph);
+    this.forceSimulation.updateRelationships(this.graph);
+  }
+
+  /**
+   * Updates relationshiop rendering in visualization.
+   * 
+   * The updates include:
+   * 
+   * - Update graph geomery configs
+   * - D3 re-joins relationship objects with DOM elements
+   * - Rebinds {@link RelationshipEventHandlers}
+   * - Executes all relationshipo re-rendering logics
+   * - Executes {@link ForceSimulation!updateRelationships} 
+   * - Executes {@link !render} since the relationshp arrows have different bending depending on how the nodes are connected
+   */
+  private updateRelationships() {
+    this.geometry.onGraphChange(this.graph, { updateNodes: false, updateRelationships: true });
+
+    const relationshipGroups = this.gContainer
+      .select("g.layer.relationships")
+      .selectAll<SVGGElement, RelationshipModel>("g.relationship")
+      .data(this.graph.relationships, relationship => relationship.id)
+      .join("g")
+      .attr("class", "relationship")
+      .call(relationshipEventHandlers, this.trigger)
+      .classed("selected", relationship => relationship.selected)
+
+    RELATIONSHIP_RENDERERS.forEach(renderer => relationshipGroups.call(renderer.onGraphChange, this))
+
+    this.forceSimulation.updateRelationships(this.graph);
+    this.render()
+  }
+
+  private render() {
+    this.geometry.ontick(this.graph);
+
+    const nodeGroups = this.gContainer
+      .selectAll<SVGGElement, NodeModel>("g.node")
+      .attr("transform", d => `translate(${d.x}, ${d.y})`);
+    NODE_RENDERERS.forEach(renderer => nodeGroups.call(renderer.onTick, this))
+
+    const relationshipGroups = this.gContainer
+      .selectAll<SVGGElement, RelationshipModel>("g.relationship")
+      .attr(
+        "transform",
+        d =>
+          `translate(${d.source.x} ${d.source.y}) rotate(${
+            d.naturalAngle + 180
+          })`
+      )
+    RELATIONSHIP_RENDERERS.forEach(renderer => relationshipGroups.call(renderer.onTick, this));
   }
 
   private zoomToFitViewport() {
@@ -240,115 +409,4 @@ export class Visualization {
       centerPointOffset: { x: -graphCenterX, y: -graphCenterY }
     };
   }
-
-  public update(options: { updateNodes: boolean; updateRelationships: boolean; restartSimulation: boolean }): void {
-    if (options.updateNodes) {
-      this.updateNodes();
-    }
-
-    if (options.updateRelationships) {
-      this.updateRelationships();
-    }
-
-    if (options.restartSimulation) {
-      this.forceSimulation.restart();
-    }
-
-    this.trigger("updated");
-  }
-
-  /**
-   * Reconfigure and resizing the canvase holding the graph visualization.
-   *
-   * The reconfiguration overwrites
-   *
-   * 1. whether or not the resizing becomes a full-screen
-   * 2. whether or not a zoom-operation requires a modifier key being pressed simultaneously
-   *
-   * The resizing repositions the display rectangle area such that it is place at the center (0, 0) of the
-   * coordinate system
-   *
-   * @param isFullScreen a flag indicating whether or not the resizing becomes a full-screen
-   * @param wheelZoomRequiresModifierKey whether or not the scroll-zooming requires an accompnying modifier key (such as
-   * Control/Command key) being pressed
-   */
-  public resize(isFullScreen: boolean, wheelZoomRequiresModifierKey: boolean): void {
-    const size = this.measureSize();
-    this.isFullScreen = isFullScreen;
-    this.wheelZoomRequiresModifierKey = wheelZoomRequiresModifierKey;
-
-    this.rect.attr("x", () => -Math.floor(size.width / 2)).attr("y", () => Math.floor(size.height / 2));
-
-    this.root.attr(
-      "viewBox",
-      [-Math.floor(size.width / 2), -Math.floor(size.height / 2), size.width, size.height].join(" ")
-    );
-  }
-
-  /**
-   * An event dispatcher that, given a specified event name, triggers a list of callbacks attached to the event.
-   *
-   * The {@link Visualization} maintians a mapping from the event name to the list of callbacks. This mapping can be
-   * updated using {@link Visualization.on}
-   *
-   * @param eventName a event name such as {@link Visualization.CANVAS_CLICKED_EVENT_NAME}
-   * @param args the runtime-arguments passed to the executing callbacks. NOTE that these arguments will be applied to
-   * all matching callbacks
-   */
-  public trigger(eventName: string, ...args: any[]): void {
-    const callbacksForEvent = this.callbacks[eventName] ?? [];
-    callbacksForEvent.forEach((callback) => callback.apply(null, args));
-  }
-
-  /**
-   * Associates a function with an user event on this {@link Visualization}.
-   *
-   * @param eventName the provided event name such as {@link Visualization.CANVAS_CLICKED_EVENT_NAME}
-   * @param callback the callback function that is to be attached to the event and that is to be executed when the event
-   * is called
-   *
-   * @returns the {@link Visualization} instance on which this function is called for better API chaining
-   */
-  public on(eventName: string, callback: (...args: any) => void): this {
-    const existingCallback = this.callbacks[eventName];
-
-    if (existingCallback === null || existingCallback === undefined) {
-      this.callbacks[eventName] = [];
-    }
-
-    this.callbacks[eventName]?.push(callback);
-
-    return this;
-  }
-
-  private render() {
-    this.geometry.ontick(this.graph);
-
-    const nodeGroups = this.gContainer
-      .selectAll<SVGGElement, NodeModel>("g.node")
-      .attr("transform", d => `translate(${d.x}, ${d.y})`);
-    NODE_RENDERERS.forEach(renderer => nodeGroups.call(renderer.onTick, this))
-
-    const relationshipGroups = this.gContainer
-      .selectAll<SVGGElement, RelationshipModel>("g.relationship")
-      .attr(
-        "transform",
-        d =>
-          `translate(${d.source.x} ${d.source.y}) rotate(${
-            d.naturalAngle + 180
-          })`
-      )
-  }
-
-  private updateNodes() {
-    this.geometry.onGraphChange(this.graph, { updateNodes: true, updateRelationships: false });
-  }
-
-  private updateRelationships() {
-
-
-    this.render()
-  }
-
-  private setInitialZoom(): void {}
 }
