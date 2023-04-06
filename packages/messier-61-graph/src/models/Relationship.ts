@@ -16,7 +16,9 @@
 import type { NodeModel } from "./Node";
 import type { VizItemProperty } from "./VizItemProperty";
 
-export type RelationshipCaptionLayout = "internal" | "external";
+export const INTERNAL_CAPTION_LAYOUT = "internal";
+export const EXTERNAL_CAPTION_LAYOUT = "external";
+export type RelationshipCaptionLayout = typeof INTERNAL_CAPTION_LAYOUT | typeof EXTERNAL_CAPTION_LAYOUT;
 
 export class RelationshipModel {
   id: string;
@@ -35,6 +37,8 @@ export class RelationshipModel {
   shortCaptionLength: number | undefined;
   selected: boolean;
   centreDistance: number;
+
+  arrow: ArcArrow | LoopArrow | StraightArrow | undefined;
 
   constructor(
     id: string,

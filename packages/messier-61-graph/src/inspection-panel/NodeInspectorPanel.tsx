@@ -45,11 +45,6 @@ export interface NodeInspectorPanelProps {
   DetailsPaneOverride?: 
 }
 
-/**
- * 
- * @param props 
- * @returns 
- */
 export function NodeInspectorPanel(props: NodeInspectorPanelProps): JSX.Element {
   const hoveringNodeOrRelationship: boolean =
     props.hoveredItem != null && [NODE, RELATIONSHIP].includes(props.hoveredItem.type);

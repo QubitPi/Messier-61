@@ -1,3 +1,6 @@
+import { NodeModel } from "./Node";
+import { RelationshipModel } from "./Relationship";
+
 /*
  * Copyright Jiaqi Liu
  *
@@ -15,19 +18,25 @@
  */
 const OBJECT_TYPE = "object";
 
+export const COLOR = "color";
+export const FONT_SIZE = "font-size";
+export const BORDER_WIDTH = "border-width";
+export const BORDER_COLOR = "border-color";
+export const TEXT_COLOR_INTERNAL = "text-color-internal"
+
 export const DEFAULT_STYLE = {
   node: {
     diameter: "50px",
-    color: "#A5ABB6",
-    "border-color": "#9AA1AC",
-    "border-width": "2px",
-    "text-color-internal": "#FFFFFF",
-    "font-size": "10px",
+    COLOR: "#A5ABB6",
+    BORDER_COLOR: "#9AA1AC",
+    BORDER_WIDTH: "2px",
+    TEXT_COLOR_INTERNAL: "#FFFFFF",
+    FONT_SIZE: "10px",
   },
   relationship: {
-    color: "#A5ABB6",
+    COLOR: "#A5ABB6",
     "shaft-width": "1px",
-    "font-size": "8px",
+    FONT_SIZE: "8px",
     padding: "3px",
     "text-color-external": "#000000",
     "text-color-internal": "#FFFFFF",
@@ -51,6 +60,20 @@ export class Selector {
   private selectorArrayToString(selectors: any): string {
     const escaped = selectors.map((r: any) => r.replace(/\./g, "\\."));
     return escaped.join(".");
+  }
+}
+
+export class StyleElement {
+  private selector: Selector;
+  private props: any;
+
+  constructor(selector: Selector) {
+    this.selector = selector;
+    this.props = {};
+  }
+
+  public get(attribute: string): any {
+    return this.props[attribute] ?? "";
   }
 }
 
@@ -99,6 +122,29 @@ export class GraphStyleModel {
    */
   public resetToDefault(): void {
     this.loadRules();
+  }
+
+  /**
+   * Computes and returns the styling of a specified graph node.
+   * 
+   * The returned styling can be accessed using {@link StyleElement.get}.
+   * 
+   * @param node The node whose styling is to be calculated
+   *
+   * @returns an object that contains all styling info of a displaying node
+   */
+  public forNode(node: NodeModel): StyleElement {
+    const selector = new Selector("node", node.labels == null ? [] : node.labels);
+    
+    if (node.labels.length > 0) {
+      this.setDefaultNodeStyle(selector, node);
+    }
+
+    return this.calculateStyle(selector);
+  }
+
+  public forRelationship(relationship: RelationshipModel): StyleElement {
+
   }
 
   private parseSelector(key: string): Selector {

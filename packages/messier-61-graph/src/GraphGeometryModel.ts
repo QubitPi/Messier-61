@@ -48,7 +48,7 @@ export class GraphGeometryModel {
   }
 
   public ontick(graph: GraphModel): void {
-    this;
+    this.relationshipLayout.layoutRelationships(graph);
   }
 
   public onGraphChange(graph: GraphModel, options = { updateNodes: true, updateRelationships: true }): void {}

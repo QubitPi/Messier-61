@@ -95,22 +95,22 @@ export class GraphEventHandlerModel {
 
     this.visualization.update({
       updateNodes: this.selectedItem instanceof NodeModel,
-      updateRelationships: this.selectItem instanceof RelationshipModel,
+      updateRelationships: this.selectedItem instanceof RelationshipModel,
       restartSimulation: false,
     });
   }
 
   public deselectItem(): void {
-    if (this.selectedItem) {
+    if (this.selectedItem != null) {
       this.selectedItem.selected = false;
 
       this.visualization.update({
         updateNodes: this.selectedItem instanceof NodeModel,
-        updateRelationships: this.selectItem instanceof RelationshipModel,
+        updateRelationships: this.selectedItem instanceof RelationshipModel,
         restartSimulation: false,
       });
 
-      this.selectItem == null;
+      this.selectedItem = null;
     }
 
     this.onItemSelected({

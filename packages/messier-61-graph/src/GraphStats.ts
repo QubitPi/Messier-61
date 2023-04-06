@@ -1,5 +1,3 @@
-import { GraphModel } from "./models/Graph";
-
 /*
  * Copyright Jiaqi Liu
  *
@@ -15,7 +13,10 @@ import { GraphModel } from "./models/Graph";
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-const ALL_SORTS = "*";
+import { GraphModel } from "./models/Graph";
+
+const ALL_SORTS_OF_NODES = "*";
+const ALL_SORTS_OF_RELATIONSHIPS = "*";
 
 export type GraphStatsLabel = Record<
   string,
@@ -39,9 +40,15 @@ export interface GraphStats {
 }
 
 export function getGraphStats(graph: GraphModel): GraphStats {
-  const labelStats: GraphStatsLabel = graph.nodes.length === 0 ? {} : { ALL_SORTS: { count: 1, properties: {} } };
-  const relationshipTypeStats: GraphStatsRelationshipTypes =
-    graph.relationships.length === 0 ? {} : { ALL_SORTS: { count: 1, properties: {} } };
+  const labelStats: GraphStatsLabel = {};
+  if (graph.nodes.length !== 0) {
+    labelStats[ALL_SORTS_OF_NODES] = { count: 1, properties: {} };
+  }
+
+  const relationshipTypeStats: GraphStatsRelationshipTypes = {};
+  if (graph.relationships.length !== 0) {
+    labelStats[ALL_SORTS_OF_RELATIONSHIPS] = { count: 1, properties: {} };
+  } 
 
   graph.nodes.forEach((node) => {
     node.labels.forEach((label) => {

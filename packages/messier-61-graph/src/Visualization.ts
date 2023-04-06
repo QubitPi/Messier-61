@@ -15,12 +15,17 @@
  */
 import { easeCubic } from "d3-ease";
 import { BaseType, Selection, select as d3Select } from "d3-selection";
-import { ZoomBehavior, zoom as d3Zoom, D3ZoomEvent } from "d3-zoom";
+import { ZoomBehavior, zoom as d3Zoom, D3ZoomEvent, zoomIdentity } from "d3-zoom";
 import { GraphModel } from "./models/Graph";
 import { GraphStyleModel } from "./models/GraphStyle";
 import { ForceSimulation } from "./ForceSimulation";
 import { GraphGeometryModel } from "./GraphGeometryModel";
 import { ZoomLimitsReached } from "./ZoomLimitsReached";
+import { NodeModel } from "./models/Node";
+import { NODE_RENDERERS } from "./Renderer";
+import { RelationshipModel } from "./models/Relationship";
+
+const ZOOM_FIT_PADDING_PERCENT = 0.05
 
 export enum ZoomType {
   IN = "in",
@@ -28,8 +33,8 @@ export enum ZoomType {
   FIT = "fit",
 }
 
-export const ZOOM_MIN_SCALE = 0.1;
-export const ZOOM_MAX_SCALE = 2;
+let ZOOM_MIN_SCALE = 0.1;
+const ZOOM_MAX_SCALE = 2;
 
 export const CANVAS_CLICKED_EVENT_NAME = "canvasClicked";
 
@@ -40,7 +45,7 @@ export class Visualization {
   private gContainer: Selection<SVGGElement, unknown, BaseType, unknown>;
 
   private isFullScreen: boolean;
-  private style: GraphStyleModel;
+  public style: GraphStyleModel;
   private geometry: GraphGeometryModel;
   private measureSize: () => { width: number; height: number };
 
@@ -79,7 +84,8 @@ export class Visualization {
       .style("fill", "none")
       .style("pointer-events", "all")
       .attr("x", () => -Math.floor(measureSize().width / 2))
-      .attr("y", () => Math.floor(measureSize().height / 2))
+      // https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/Positions#:~:text=For%20all%20elements%2C%20SVG%20uses,)%2C%20or%20point%20of%20origin.
+      .attr("y", () => -Math.floor(measureSize().height / 2))
       .attr("width", "100%")
       .attr("height", "100%")
       .attr("transform", "scale(1)")
@@ -156,7 +162,7 @@ export class Visualization {
     this.updateNodes();
     this.updateRelationships();
 
-    this.adjustZoomMinScaleExtentToFitGraph();
+    this.adjustZoomMinScaleExtentToFitGraph(0.75);
     this.setInitialZoom();
   }
 
@@ -164,7 +170,76 @@ export class Visualization {
     this.forceSimulation.precomputeAndStart(() => this.initialZoomToFit && this.zoomByType(ZoomType.FIT));
   }
 
-  public zoomByType(zoomType: ZoomType): void {}
+  public zoomByType(zoomType: ZoomType): void {
+    this.isPanning = true;
+    this.isZoomClick = true;
+
+    if (zoomType === ZoomType.IN) {
+      this.zoomBehavior.scaleBy(this.root, 1.3);
+    } else if (zoomType === ZoomType.OUT) {
+      this.zoomBehavior.scaleBy(this.root, 0.7);
+    } else if (zoomType === ZoomType.FIT) {
+      this.zoomToFitViewport();
+      this.adjustZoomMinScaleExtentToFitGraph(1);
+    }
+  }
+
+  private zoomToFitViewport() {
+    const scaleAndOffset = this.getZoomScaleFactorToFitWholeGraph();
+    if (scaleAndOffset != null) {
+      this.zoomBehavior.transform(
+        this.root,
+        zoomIdentity
+          // Do not zoom in more than zoom max scale for really small graphs
+          .scale(Math.min(scaleAndOffset.scale, ZOOM_MAX_SCALE))
+          // Let scaling factor be k, i.e. k = Math.min(scaleAndOffset.scale, ZOOM_MAX_SCALE)
+          // In the case of k < 0, we have
+          // (kw / 2 + k * offset) / (w / 2 + offset) = k, where offset is the distance between fitted graph edge and
+          // window edge
+          // so the amount of shift from zoomed-in center to fit-center in x direction is k * (w / 2 + offset) which is
+          // k * scaleAndOffset.centerPointOffset.x
+          // 
+          .translate(scaleAndOffset.centerPointOffset.x, scaleAndOffset.centerPointOffset.y)
+      )
+    }
+  }
+
+  private adjustZoomMinScaleExtentToFitGraph(paddingFactor: number): void {
+    const sacleAndOffset = this.getZoomScaleFactorToFitWholeGraph();
+    const scaleToFitGraphWithPadding = sacleAndOffset
+      ? sacleAndOffset.scale * paddingFactor
+      : ZOOM_MIN_SCALE
+
+    if (scaleToFitGraphWithPadding <= ZOOM_MIN_SCALE) {
+      ZOOM_MIN_SCALE = scaleToFitGraphWithPadding;
+      this.zoomBehavior.scaleExtent([ZOOM_MIN_SCALE, ZOOM_MAX_SCALE])
+    }
+  }
+
+  private getZoomScaleFactorToFitWholeGraph(): { scale: number; centerPointOffset: { x: number, y: number } } | undefined {
+    const graphSize = this.gContainer.node()?.getBBox();
+    const availableWidth = this.root.node()?.clientWidth;
+    const availableHeight = this.root.node()?.clientHeight;
+
+    if (graphSize == null || availableWidth == null || availableHeight == null) {
+      return;
+    }
+
+    const graphWidth  = graphSize.width;
+    const graphHeight = graphSize.height;
+
+    if (graphWidth === 0 || graphHeight === 0) {
+      return;
+    }
+
+    const graphCenterX = graphSize.x + graphWidth / 2;
+    const graphCenterY = graphSize.y + graphHeight / 2;
+
+    return {
+      scale: (1 - ZOOM_FIT_PADDING_PERCENT) / Math.max(graphWidth / availableWidth, graphHeight / availableHeight),
+      centerPointOffset: { x: -graphCenterX, y: -graphCenterY }
+    };
+  }
 
   public update(options: { updateNodes: boolean; updateRelationships: boolean; restartSimulation: boolean }): void {
     if (options.updateNodes) {
@@ -247,16 +322,33 @@ export class Visualization {
   }
 
   private render() {
-    return null;
+    this.geometry.ontick(this.graph);
+
+    const nodeGroups = this.gContainer
+      .selectAll<SVGGElement, NodeModel>("g.node")
+      .attr("transform", d => `translate(${d.x}, ${d.y})`);
+    NODE_RENDERERS.forEach(renderer => nodeGroups.call(renderer.onTick, this))
+
+    const relationshipGroups = this.gContainer
+      .selectAll<SVGGElement, RelationshipModel>("g.relationship")
+      .attr(
+        "transform",
+        d =>
+          `translate(${d.source.x} ${d.source.y}) rotate(${
+            d.naturalAngle + 180
+          })`
+      )
   }
 
   private updateNodes() {
     this.geometry.onGraphChange(this.graph, { updateNodes: true, updateRelationships: false });
   }
 
-  private updateRelationships() {}
+  private updateRelationships() {
 
-  private adjustZoomMinScaleExtentToFitGraph(padding_factor: number = 0.75): void {}
+
+    this.render()
+  }
 
   private setInitialZoom(): void {}
 }
