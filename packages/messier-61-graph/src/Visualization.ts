@@ -22,7 +22,7 @@ import { ForceSimulation } from "./ForceSimulation";
 import { GraphGeometryModel } from "./GraphGeometryModel";
 import { ZoomLimitsReached } from "./ZoomLimitsReached";
 import { NodeModel } from "./models/Node";
-import { NODE_RENDERERS } from "./Renderer";
+import { NODE_RENDERERS } from "./renderer/Renderer";
 import { RelationshipModel } from "./models/Relationship";
 import { nodeEventHandlers } from "./event-handler/NodeEventHandlers";
 import { relationshipEventHandlers } from "./event-handler/RelationshipEventHandlers";
@@ -363,13 +363,6 @@ export class Visualization {
         zoomIdentity
           // Do not zoom in more than zoom max scale for really small graphs
           .scale(Math.min(scaleAndOffset.scale, ZOOM_MAX_SCALE))
-          // Let scaling factor be k, i.e. k = Math.min(scaleAndOffset.scale, ZOOM_MAX_SCALE)
-          // In the case of k < 0, we have
-          // (kw / 2 + k * offset) / (w / 2 + offset) = k, where offset is the distance between fitted graph edge and
-          // window edge
-          // so the amount of shift from zoomed-in center to fit-center in x direction is k * (w / 2 + offset) which is
-          // k * scaleAndOffset.centerPointOffset.x
-          // 
           .translate(scaleAndOffset.centerPointOffset.x, scaleAndOffset.centerPointOffset.y)
       )
     }

@@ -14,18 +14,27 @@
  * limitations under the License.
  */
 import { BaseType, Selection } from "d3-selection";
-import { Visualization } from "./Visualization";
-import { NodeCaptionLine, NodeModel } from "./models/Node";
-import { BORDER_COLOR, BORDER_WIDTH, COLOR, FONT_SIZE, TEXT_COLOR_INTERNAL } from "./models/GraphStyle";
-import { RelationshipModel } from "./models/Relationship";
+import { Visualization } from "../Visualization";
+import { NodeCaptionLine, NodeModel } from "../models/Node";
+import { BORDER_COLOR, BORDER_WIDTH, COLOR, FONT_SIZE, TEXT_COLOR_INTERNAL } from "../models/GraphStyle";
+import { RelationshipModel } from "../models/Relationship";
 
-const NO_OP_RENDERER_HANDLER = () => undefined;
 type RendererEventHandler<Datum> = (
   selection: Selection<SVGGElement, Datum, BaseType, unknown>,
   style: Visualization
 ) => any;
 
-class Renderer<Datum> {
+const NODE_RING_RENDERER_NAME = "nodeRing";
+const NODE_OUTLINE_RENDERER_NAME = "nodeOutline";
+const NODE_CAPTION_RENDERER_NAME = "nodeCaption";
+
+const ARROW_PATH_RENDERER_NAME = "arrowPath";
+const RELATIONSHIP_TYPE_RENDERER_NAME = "relationshipType";
+
+export const NODE_RING_STROKE_WIDTH_IN_PX = 8;
+export const NO_OP_RENDERER_HANDLER = () => undefined;
+
+export class Renderer<Datum> {
   public name: string;
   public onTick: RendererEventHandler<Datum>;
   public onGraphChange: RendererEventHandler<Datum>;
@@ -36,13 +45,6 @@ class Renderer<Datum> {
     this.onGraphChange = onGraphChange;
   }
 }
-
-const NODE_RING_RENDERER_NAME = "nodeRing";
-const NODE_OUTLINE_RENDERER_NAME = "nodeOutline";
-const NODE_CAPTION_RENDERER_NAME = "nodeCaption";
-
-const ARROW_PATH_RENDERER_NAME = "arrowPath";
-const RELATIONSHIP_TYPE_RENDERER_NAME = "relationshipType";
 
 const NODE_OUTLINE_RENDERER = new Renderer<NodeModel>({
   name: NODE_OUTLINE_RENDERER_NAME,
@@ -105,7 +107,7 @@ const NODE_RING_RENDERER = new Renderer<NodeModel>({
       .classed("ring", true)
       .attr("cx", 0)
       .attr("cy", 0)
-      .attr("stroke-width", "8px")
+      .attr("stroke-width", `${NODE_RING_STROKE_WIDTH_IN_PX}px`)
       .attr("r", (node: NodeModel) => node.radius + 4)
 
     return circles.exit().remove();

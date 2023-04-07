@@ -38,8 +38,8 @@ export class GraphGeometryModel {
   private relationshipLayout: RelationshipLayout;
 
   /**
-   * Creates a
-   * @param style
+   * 
+   * @param style 
    */
   constructor(style: GraphStyleModel) {
     this.style = style;
@@ -51,5 +51,15 @@ export class GraphGeometryModel {
     this.relationshipLayout.layoutRelationships(graph);
   }
 
-  public onGraphChange(graph: GraphModel, options = { updateNodes: true, updateRelationships: true }): void {}
+  public onGraphChange(graph: GraphModel, options: { updateNodes: boolean; updateRelationships: boolean }): void {
+    if (options.updateNodes) {
+      this.setNodeRadii(graph.nodes)
+      this.formatNodeCaptions(graph.nodes)
+    }
+
+    if (options.updateRelationships) {
+      this.formatRelationshipCaptions(graph.relationships);
+      this.relationshipLayout.measureRelationshipCaptions(graph.relationships);
+    }
+  }
 }
