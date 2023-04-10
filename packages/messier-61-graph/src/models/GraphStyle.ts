@@ -19,6 +19,8 @@ import { RelationshipModel } from "./Relationship";
 const OBJECT_TYPE = "object";
 
 export const COLOR = "color";
+export const CAPTION = "caption";
+export const DIAMETER = "diameter";
 export const FONT_SIZE = "font-size";
 export const BORDER_WIDTH = "border-width";
 export const BORDER_COLOR = "border-color";
@@ -26,7 +28,7 @@ export const TEXT_COLOR_INTERNAL = "text-color-internal"
 
 export const DEFAULT_STYLE = {
   node: {
-    diameter: "50px",
+    DIAMETER: "50px",
     COLOR: "#A5ABB6",
     BORDER_COLOR: "#9AA1AC",
     BORDER_WIDTH: "2px",
@@ -40,7 +42,7 @@ export const DEFAULT_STYLE = {
     padding: "3px",
     "text-color-external": "#000000",
     "text-color-internal": "#FFFFFF",
-    caption: "<type>",
+    CAPTION: "<type>",
   },
 };
 
