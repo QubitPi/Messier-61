@@ -87,25 +87,40 @@ export class GraphGeometryModel {
   }
 
   private fitCaptionIntoCircle(node: NodeModel, style: GraphStyleModel, canvas2DContext: CanvasRenderingContext2D): NodeCaptionLine[] {
-    const fontFamily = "sans-serif";
-    const fontSize = parseFloat(style.forNode(node).get(FONT_SIZE));
     // Roughtly calculate max text length the circle can fit
     // Note this is about the total number of character that fit, not the longest line that fit in circle
     // Each character occupies an area of (fontSize) * (fontSize)
     // The number of character that can fit into the circle is the area of the circle devided by the each chracter's
     // occupying area
     const maxCaptionTextLength = Math.floor((Math.pow(node.radius, 2) * Math.PI) / Math.pow(fontSize, 2));
+
     const nodeText = this.interpolate(style.forNode(node).get(CAPTION), node);
     const captionText = nodeText.length > maxCaptionTextLength ? nodeText.substring(0, maxCaptionTextLength): nodeText;
-    
+
+    const fontSize = parseFloat(style.forNode(node).get(FONT_SIZE));
+    const whiteSpaceMeasureWidth = measureText(" ", "sans-serif", fontSize, canvas2DContext);
+
+    const words = captionText.split(" ");
+
+
+
+    const maxLines = (node.radius * 2) / fontSize;
+
+    for (let lineCount = 1; lineCount < maxLines; lineCount++) {
+      const [candidateLines, candidateWords] = fitOnFixedNumberOfLines(lineCount);
+
+      
+    }
+
+
   }
 
-  private interpolate(str: any, item: (NodeModel | RelationshipModel)): string {
+  private interpolate(str: any, item: NodeModel | RelationshipModel): string {
     // Type \{([^{}]*)\} into https://regex101.com/ for explaination
     const regex = /\{([^{}]*)\}/g;
 
     // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace#specifying_a_function_as_the_replacement
-    let interpolatedString = str.replace(regex, (_match: any, firstCapturedGroup: any) => item.propertyMap[firstCapturedGroup]);
+    let interpolatedString = str.replace(regex, (_match: any, firstCapturedGroup: string) => item.propertyMap[firstCapturedGroup] ?? "");
     
     if (interpolatedString.length < 1 && str === "{id}" && (item instanceof NodeModel)) {
       interpolatedString = "<id>"
@@ -115,6 +130,13 @@ export class GraphGeometryModel {
       interpolatedString = "<type>"
     }
 
-    return interpolatedString.replace(/^<(id|type)>$/, (_match: any, firstCapturedGroup: any) => item.propertyMap[firstCapturedGroup]);
+    return interpolatedString.replace(
+      /^<(id|type)>$/,
+      (_match: any, firstCapturedGroup: string) => item[firstCapturedGroup as keyof typeof item] ?? ""
+    );
+  }
+
+  private fitOnFixedNumberOfLines(lineCount: number): [NodeCaptionLine[], number] {
+
   }
 }

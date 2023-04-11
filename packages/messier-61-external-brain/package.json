@@ -1,0 +1,19 @@
+{
+  "name": "@paion-data/messier-61-external-brain",
+  "version": "0.1.0",
+  "engines": {
+    "node": ">=16.0.0 <18.0.0"
+  },
+  "author": "Jiaqi Liu",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/QubitPi/Messier-61.git"
+  },
+  "dependencies": {
+    "styled-components": "^5.3.9"
+  },
+  "devDependencies": {
+    "@types/styled-components": "^5.1.26"
+  }
+}
