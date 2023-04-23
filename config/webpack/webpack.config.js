@@ -23,7 +23,7 @@ module.exports = function (webpackEnv) {
   const isProdEnvironment = webpackEnv === "production";
 
   return {
-    entry: "./packages/messier-61-app/index.tsx",
+    entry: "./packages/messier-61-app/src/index.tsx",
     mode: isProdEnvironment ? "production" : "development",
     output: {
       publicPath: "/",
@@ -92,7 +92,7 @@ module.exports = function (webpackEnv) {
       ),
     ],
     resolve: {
-      extensions: [".ts", ".tsx", ".js", ".json"],
+      extensions: [".ts", ".tsx", ".js", ".json"]
     },
   };
 };

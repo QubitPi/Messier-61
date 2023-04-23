@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "es6",
-    "module": "esnext",
+    "module": "es6",
     "jsx": "react-jsx",
 
     "outDir": "./dist/",
@@ -19,7 +19,9 @@
 
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true
+    "noEmit": true,
+
+    "sourceMap": true
   },
   "include": ["packages"]
 }

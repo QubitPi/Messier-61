@@ -9,25 +9,21 @@
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
     "test": "jest",
+    "install:all": "for package in packages/*/; do yarn --cwd \"${package}\"; done",
+    "clean:all": "find . -name node_modules | xargs rm -rf && find . -name yarn.lock -delete",
     "prettier-watch": "onchange \"**/*\" -- prettier --write --ignore-unknown {{changed}}"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/paion-data/Messier-61.git"
+    "url": "git+https://github.com/QubitPi/Messier-61.git"
   },
-  "author": "Paion Data Development Team",
+  "author": "Jiaqi Liu",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/paion-data/Messier-61/issues"
+    "url": "https://github.com/QubitPi/Messier-61/issues"
   },
-  "homepage": "https://github.com/paion-data/Messier-61#readme",
+  "homepage": "https://github.com/QubitPi/Messier-61#readme",
   "dependencies": {
-    "@lexical/react": "^0.8.1",
-    "@types/d3": "^7.4.0",
-    "d3": "^7.8.2",
-    "lexical": "^0.8.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.21.0",
@@ -50,7 +46,6 @@
     "jest": "^27.4.3",
     "onchange": "^7.1.0",
     "prettier": "2.8.4",
-    "react-router-dom": "^6.8.1",
     "react-test-renderer": "^18.2.0",
     "style-loader": "^3.3.1",
     "ts-jest": "^27.1.4",

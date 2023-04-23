@@ -1,0 +1,20 @@
+{
+  "name": "messier-61-app",
+  "version": "0.1.0",
+  "engines": {
+    "node": ">=16.0.0 <18.0.0"
+  },
+  "author": "Jiaqi Liu",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/QubitPi/Messier-61.git"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "react-router-dom": "^6.8.1"
+  }
+}

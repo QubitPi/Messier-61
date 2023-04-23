@@ -1,0 +1,21 @@
+{
+  "name": "messier-61-external-brain",
+  "version": "0.1.0",
+  "engines": {
+    "node": ">=16.0.0 <18.0.0"
+  },
+  "description": "Editor",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/QubitPi/Messier-61.git"
+  },
+  "author": "Jiaqi Liu",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/QubitPi/Messier-61/issues"
+  },
+  "homepage": "https://github.com/QubitPi/Messier-61#readme",
+  "dependencies": {
+    "react": "^18.2.0"
+  }
+}
