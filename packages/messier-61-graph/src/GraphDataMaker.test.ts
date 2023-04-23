@@ -31,31 +31,43 @@ test("two separate tripples can be generated", () => {
     nodes: [
       {
         id: "1",
-        name: "I",
+        fields: {
+          name: "I"
+        }
       },
       {
         id: "2",
-        name: "Apple",
+        fields: {
+          name: "Apple"
+        }
       },
       {
         id: "4",
-        name: "He",
+        fields: {
+          name: "He"
+        }
       },
       {
         id: "5",
-        name: "Google",
+        fields: {
+          name: "Google"
+        }
       },
     ],
     links: [
       {
         id: "3",
-        name: "like",
+        fields: {
+          name: "like"
+        },
         source: "1",
         target: "2",
       },
       {
         id: "6",
-        name: "likes",
+        fields: {
+          name: "likes"
+        },
         source: "4",
         target: "5",
       },
@@ -73,27 +85,37 @@ test("3 nodes connected in a line can be generated", () => {
     nodes: [
       {
         id: "1",
-        name: "I",
+        fields: {
+          name: "I"
+        }
       },
       {
         id: "2",
-        name: "Apple",
+        fields: {
+          name: "Apple"
+        }
       },
       {
         id: "5",
-        name: "Tencent",
+        fields: {
+          name: "Tencent"
+        }
       },
     ],
     links: [
       {
         id: "3",
-        name: "like",
+        fields: {
+          name: "like"
+        },
         source: "1",
         target: "2",
       },
       {
         id: "6",
-        name: "hate",
+        fields: {
+          name: "hate"
+        },
         source: "1",
         target: "5",
       },

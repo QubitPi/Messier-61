@@ -44,7 +44,6 @@ export function makeGraphDataFromSvoTripples(tripples: string[][], randomIdGener
         id: sourceId,
         fields: { name: sourceNodeName }
       });
-      
     } else {
       sourceId = existingSourceNode.id;
     }
@@ -71,9 +70,8 @@ export function makeGraphDataFromSvoTripples(tripples: string[][], randomIdGener
 }
 
 function find(nodes: Node[], targetName: string): Node {
-  // https://stackoverflow.com/a/71402518
   return nodes.find((node) => {
-    const fields = node.fields as {[key: string]: any};
-    fields["name"] === targetName
+    const fields = node.fields as {[key: string]: any}; // https://stackoverflow.com/a/71402518
+    return fields.name === targetName
   }) as Node;
 }
