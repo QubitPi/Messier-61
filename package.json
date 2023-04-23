@@ -1,16 +1,18 @@
 {
   "name": "messier-61",
+  "private": "true",
   "version": "0.1.0",
   "engines": {
     "node": ">=16.0.0 <18.0.0"
   },
   "description": "Find solution via Knowledge Graph and Refine the solution with Data",
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
     "test": "jest",
-    "install:all": "for package in packages/*/; do yarn --cwd \"${package}\"; done",
-    "clean:all": "find . -name node_modules | xargs rm -rf && find . -name yarn.lock -delete",
     "prettier-watch": "onchange \"**/*\" -- prettier --write --ignore-unknown {{changed}}"
   },
   "repository": {

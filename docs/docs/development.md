@@ -16,8 +16,22 @@ once:
 
 ```bash
 cd Messier-61
-yarn install:all
+yarn install
 ```
+
+Messier-61 uses [yarn workspaces][yarn workspaces] to manage monorepo packages. Whenever we need to run common
+operations arcoss all packages, we shall not need to repeat them in each, but simply run a single command at the
+project root instead. Therefore, scrips like
+
+```json
+"scripts": {
+  "install:all": "for package in packages/*/; do yarn --cwd \"${package}\"; done",
+  "clean:all": "find . -name node_modules | xargs rm -rf && find . -name yarn.lock -delete",
+}
+```
+
+are not necessary at all. **Another pitfall of having a manual cross commands like `install:all` is that it results in
+runtime linking issues**, such as `Uncaught TypeError: Cannot read properties of null (reading 'useContext')`.
 
 ### Available Scripts
 
@@ -149,3 +163,5 @@ See https://stackoverflow.com/a/64994595
 [TypeDoc]: https://qubitpi.github.io/typedoc-site/guides/overview/
 
 [use yarn to install all packages]: https://stackoverflow.com/a/69411230
+
+[yarn workspaces]: https://classic.yarnpkg.com/lang/en/docs/workspaces/
