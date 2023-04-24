@@ -3,6 +3,9 @@ sidebar_position: 2
 title: Development
 ---
 
+Since we are using Babel 7+, babel config for all packages is in [babel.config.js][babel config should be named
+babel.config.js]
+
 Overview
 --------
 
@@ -14,10 +17,16 @@ Messier-61 is written using React with TypeScript. Because Messier-61 is a monor
 among modules, it is recommended to fully [build and install][use yarn to install all packages] the project at least 
 once:
 
-```   
+```bash
 cd Messier-61
 yarn install
 ```
+
+:::caution
+
+Messier-61 uses **yarn 2+**, if you happen to have classic yarn installed, [upversion yarn first][yarn upgrade to 2]
+
+:::
 
 Messier-61 uses [yarn workspaces][yarn workspaces] to manage monorepo packages. Whenever we need to run common
 operations arcoss all packages, we shall not need to repeat them in each, but simply run a single command at the
@@ -30,8 +39,13 @@ project root instead. Therefore, scrips like
 }
 ```
 
-are not necessary at all. **Another pitfall of having a manual cross commands like `install:all` is that it results in
-runtime linking issues**, such as `Uncaught TypeError: Cannot read properties of null (reading 'useContext')`.
+are not necessary at all. Worksapce allows multiple projects (in our case, packages) to live together in the same
+repository and to cross-reference each other - any modification to one's source code being instantly applied to the
+others, which is why **another pitfall of having a manual cross commands like `install:all` is that it results in
+runtime linking issues**, such as `Uncaught TypeError: Cannot read properties of null (reading 'useContext')`, if we
+don't use [yarn workspaces][yarn workspaces]
+
+_Messier-61 contains at only one workspace: the root itself_.
 
 :::info
 
@@ -165,10 +179,13 @@ See https://stackoverflow.com/a/64994595
 
 [API]: https://qubitpi.github.io/Messier-61/api/
 
+[babel config should be named babel.config.js]: https://qubitpi.github.io/babel-website/docs/v7-migration/#config-lookup-changes
+
 [onchange]: https://www.npmjs.com/package/onchange
 
 [TypeDoc]: https://qubitpi.github.io/typedoc-site/guides/overview/
 
 [use yarn to install all packages]: https://stackoverflow.com/a/69411230
 
-[yarn workspaces]: https://classic.yarnpkg.com/lang/en/docs/workspaces/
+[yarn upgrade to 2]: https://yarnpkg.com/getting-started/migration#why-should-you-migrate
+[yarn workspaces]: https://yarnpkg.com/features/workspaces
