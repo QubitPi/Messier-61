@@ -8,7 +8,9 @@
     "^.+\\.css$": "<rootDir>/config/jest/cssTransform.js",
     "^(?!.*\\.(js|jsx|mjs|cjs|ts|tsx|css|json)$)": "<rootDir>/config/jest/fileTransform.js"
   },
-  "transformIgnorePatterns": ["node_modules/(?!@ngrx|(?!deck.gl)|ng-dynamic)"],
+  "transformIgnorePatterns": [
+    "'/node_modules/(?!(@memgraph)/)'"
+  ],
   "moduleNameMapper": {
     "^.+\\.module\\.(css|sass|scss)$": "identity-obj-proxy"
   }

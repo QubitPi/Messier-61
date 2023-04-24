@@ -14,7 +14,7 @@ Messier-61 is written using React with TypeScript. Because Messier-61 is a monor
 among modules, it is recommended to fully [build and install][use yarn to install all packages] the project at least 
 once:
 
-```bash
+```   
 cd Messier-61
 yarn install
 ```
@@ -32,6 +32,13 @@ project root instead. Therefore, scrips like
 
 are not necessary at all. **Another pitfall of having a manual cross commands like `install:all` is that it results in
 runtime linking issues**, such as `Uncaught TypeError: Cannot read properties of null (reading 'useContext')`.
+
+:::info
+
+The top-level package.json shall not have any dependencies declared. The devDependencies, however, do should contain
+ones that are are definitely required by all packages. These are dependencies like Babel and Jest
+
+:::
 
 ### Available Scripts
 

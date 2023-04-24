@@ -7,28 +7,12 @@
   },
   "author": "Jiaqi Liu",
   "license": "Apache-2.0",
-  "typings": "dist/messier-61-graph.d.ts",
-  "scripts": {
-    "build": "rollup -c --failAfterWarnings",
-    "test": "tsc --noEmit",
-    "prepublishOnly": "npm run test && npm run build"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/QubitPi/Messier-61.git"
   },
-  "files": [
-    "dist",
-    "package.json",
-    "README.md",
-    "LICENSE"
-  ],
   "dependencies": {
     "@memgraph/orb": "^0.2.0",
-    "lodash": "^4.17.21",
     "react": "^18.2.0"
-  },
-  "devDependencies": {
-    "@types/lodash": "^4.14.191"
   }
 }
