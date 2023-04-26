@@ -3,6 +3,9 @@ sidebar_position: 2
 title: Development
 ---
 
+https://networkx.org/documentation/latest/developer/index.html
+
+
 Since we are using Babel 7+, babel config for all packages is in [babel.config.js][babel config should be named
 babel.config.js]
 
