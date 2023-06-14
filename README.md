@@ -11,8 +11,6 @@ Messier-61 <sup>![Node Version Badge is Missing][node version badge]</sup>
 [![GitHub Workflow Status][release status]](https://github.com/QubitPi/messier-61/actions/workflows/release.yml)
 ![GitHub last commit (master)](https://img.shields.io/github/last-commit/QubitPi/messier-61/master?logo=github&style=for-the-badge)
 
-_**Messier-61 is under busy development for its Feb. beta release. Stay tunned.**_
-
 > _Messier-61_ is named after the [supermassive black hole "Messier-61"][Messier-61 Wikipedia]. In the world of Physics,
 > it's the "entry" of interstellar travelling that eventually takes people to a fresh set of world-view of galaxies
 
