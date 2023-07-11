@@ -2,7 +2,7 @@
 import { Editor } from "../../nexusgraph-editor";
 import { GraphBrowser } from "../../nexusgraph-graph";
 import { AppWrapper, EditorCaption, EditorWrapper, GraphBrowserWrapper } from "./styled";
-
+import "..//..//nexusgraph-editor/src/Lexical/editor.css"
 /**
  * The component that defines the entire nexus graph app.
  *

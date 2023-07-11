@@ -39,3 +39,4 @@ export const EditorCaption = styled.div`
   font-size: 26px;
   color: #fff;
 `;
+
