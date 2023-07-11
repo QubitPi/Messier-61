@@ -14,7 +14,6 @@ import ToolbarPlugin from "./plugins/NexusgraphToolbarPlugin";
 import OnChangePlugin from "./plugins/NexusgraphOnChangePlugin";
 
 import styles from "./LexicalEditor.module.css";
-import "./editor.css"
 
 export default function LexicalEditor({ lexicalEditorConfig }: { lexicalEditorConfig: any }): JSX.Element {
   return (
