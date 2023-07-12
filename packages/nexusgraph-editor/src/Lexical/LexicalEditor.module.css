@@ -41,9 +41,47 @@
   pointer-events: none;
 }
 
+.editor-inner {
+  background: #fff;
+  position: relative;
+}
+
 .editor-paragraph {
   margin: 0 0 15px 0;
   position: relative;
+}
+
+
+.editor-text-bold {
+  font-weight: bold;
+}
+
+.editor-text-italic {
+  font-style: italic;
+}
+
+.editor-text-underline {
+  text-decoration: underline;
+}
+
+.editor-text-strikethrough {
+  text-decoration: line-through;
+}
+
+.editor-text-underlineStrikethrough {
+  text-decoration: underline line-through;
+}
+
+.editor-text-code {
+  background-color: rgb(240, 242, 245);
+  padding: 1px 0.25rem;
+  font-family: Menlo, Consolas, Monaco, monospace;
+  font-size: 94%;
+}
+
+.editor-link {
+  color: rgb(33, 111, 219);
+  text-decoration: none;
 }
 
 
